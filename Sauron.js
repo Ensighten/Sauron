@@ -13,19 +13,22 @@
 }('Sauron', function () {
   // TODO: Make into function that when run calls .exec [auto pub's to 'all'] Sauron('hey'), Sauron.of('moo')('hey')
   var Sauron = {},
-      _SauronProto;
+      _SauronProto,
+      ACTION_KEY = '_action',
+      CHANNEL_KEY = '_channel',
+      SUB_DATA_KEY = '_sub_data',
+      PUB_DATA_KEY = '_pub_data',
+      QUEUE_KEY = '_queue',
+      QUEUE_WAIT_KEY = '_queue_waiting',
+      DEBUG_KEY = '_debug';
 
   /**
    * Sauron constructor function
    * @returns {Object<_Sauron>} Instance of Sauron
    */
-  function _Sauron() {}
-
-  var ACTION_KEY = '_action',
-      CHANNEL_KEY = '_channel',
-      SUB_DATA_KEY = '_sub_data',
-      PUB_DATA_KEY = '_pub_data',
-      DEBUG_KEY = '_debug';
+  function _Sauron() {
+    this[QUEUE_KEY] = [];
+  }
 
   // Bind prototype of create object
   _Sauron.prototype = _SauronProto = {
@@ -34,97 +37,124 @@
     // Note: These should remain in check with the 'constants' above
     '_channel': '',
     '_action': 'voice',
+    '_queue_waiting': false,
+    'push': function (fn) {
+      var queue = this[QUEUE_KEY];
+      queue.push(fn);
+      // If this is the only function in the queue, execute now
+      if (this.get(QUEUE_WAIT_KEY) === false) {
+        this.set(QUEUE_WAIT_KEY, true);
+        this.next();
+      }
+      return this;
+    },
+    'next': function () {
+      var queue = this[QUEUE_KEY],
+          fn = queue.shift();
+      if (fn) {
+        fn.call(this);
+      } else {
+        this.set(QUEUE_WAIT_KEY, false);
+      }
+      return this;
+    },
     /**
      * Execution function for Sauron instance. Takes a specific channel and interacts with subscribers depending on action
      * @returns {Object<_Sauron>} this
      */
     'exec': function () {
-      // Collect data for quick check
-      var channel = this.get(CHANNEL_KEY),
-          action = this.get(ACTION_KEY),
-          args = this.get(PUB_DATA_KEY),
-          fn = this.get(SUB_DATA_KEY),
-          debug = this.get(DEBUG_KEY);
+      this.push(function () {
+        // Collect data for quick check
+        var channel = this.get(CHANNEL_KEY),
+            action = this.get(ACTION_KEY),
+            args = this.get(PUB_DATA_KEY),
+            fn = this.get(SUB_DATA_KEY),
+            debug = this.get(DEBUG_KEY);
 
-      if (debug === true) {
-        console.log('Action: ' + action + '\nChannel: ' + channel + '\nSubData: ' + fn + '\nPubData: ' + JSON.stringify(args));
-      }
-
-      // If the action is voice
-      if (action === 'voice') {
-        // and no arguments have been passed in
-        if (!args || args.length === 0) {
-          // Do nothing
-          return this;
-        }
-      } else {
-      // Otherwise, the action is on or off
-        // and if the function is undefined
-        if (fn === undefined) {
-          // Do nothing
-          return this;
-        }
-      }
-
-      var channels = this.channels,
-          subscribers,
-          i,
-          eachFn;
-
-      if (action === 'on') {
-        // Localize the channelName
-        // If the channel does not exist, create it
-        if (!channels[channel]) {
-          channels[channel] = [];
+        if (debug === true) {
+          console.log('Action: ' + action + '\nChannel: ' + channel + '\nSubData: ' + fn + '\nPubData: ' + JSON.stringify(args));
         }
 
-        // To prevent further alteration of context, create and return a new Sauron
-        var context = this.clone();
-
-        // Add the event to the channel and capture the context
-        channels[channel].push({'fn': fn, 'context': context});
-      } else {
-        // Collect the proper variables
-        subscribers = channels[channel] || [];
-        i = subscribers.length;
-
-        // Create the appropriate each fn
+        // If the action is voice
         if (action === 'voice') {
-          _eachFn = function (subscriber) {
-            // Localize function and context
-            var fn = subscriber.fn,
-                context = subscriber.context,
-                _oldAction = context.get(ACTION_KEY),
-                _oldFn = context.get(SUB_DATA_KEY);
-
-            // Set up function for the context and default action to voice as normal
-            context.set(ACTION_KEY, 'voice');
-            context.fn(fn);
-
-            // Execute the function within the proper context
-            fn.apply(context, args);
-
-            // Return the function and action to as it was before
-            context.set(ACTION_KEY, _oldAction);
-            context.fn(_oldFn);
-          };
+          // and no arguments have been passed in
+          if (!args || args.length === 0) {
+            // Do nothing
+            return this.next();
+          }
         } else {
-        // Otherwise, assume 'off'
-          _eachFn = function (subscriber) {
-            // If the function matches, remove it
-            if (subscriber.fn === fn) {
-              subscribers.splice(i, 1);
-            }
-          };
+        // Otherwise, the action is on or off
+          // and if the function is undefined
+          if (fn === undefined) {
+            // Do nothing
+            return this.next();
+          }
         }
 
-        // Reverse loop for unsubscribing
-        while ( i-- ) {
-          // Call the each function on each item
-          _eachFn(subscribers[i]);
-        }
-      }
+        var channels = this.channels,
+            subscribers,
+            i,
+            eachFn;
 
+        if (action === 'on') {
+          // Localize the channelName
+          // If the channel does not exist, create it
+          if (!channels[channel]) {
+            channels[channel] = [];
+          }
+
+          // To prevent further alteration of context, create and return a new Sauron
+          var context = this.clone();
+
+          // Prevent queue redundancy
+          context[QUEUE_KEY] = [];
+
+          // Add the event to the channel and capture the context
+          channels[channel].push({'fn': fn, 'context': context});
+        } else {
+          // Collect the proper variables
+          subscribers = channels[channel] || [];
+          i = subscribers.length;
+
+          // Create the appropriate each fn
+          if (action === 'voice') {
+            _eachFn = function (subscriber) {
+              // Localize function and context
+              var fn = subscriber.fn,
+                  context = subscriber.context,
+                  _oldAction = context.get(ACTION_KEY),
+                  _oldFn = context.get(SUB_DATA_KEY);
+
+              // Set up function for the context and default action to voice as normal
+              context.set(ACTION_KEY, 'voice');
+              context.fn(fn);
+
+              // Execute the function within the proper context
+              fn.apply(context, args);
+
+              // Return the function and action to as it was before
+              context.set(ACTION_KEY, _oldAction);
+              context.fn(_oldFn);
+            };
+          } else {
+          // Otherwise, assume 'off'
+            _eachFn = function (subscriber) {
+              // If the function matches, remove it
+              if (subscriber.fn === fn) {
+                subscribers.splice(i, 1);
+              }
+            };
+          }
+
+          // Reverse loop for unsubscribing
+          while ( i-- ) {
+            // Call the each function on each item
+            _eachFn(subscribers[i]);
+          }
+        }
+
+        this.next();
+      });
       // Keep a fluent interface
       return this;
     },
@@ -134,11 +164,13 @@
      * @returns {Object<_Sauron>} this
      */
     'voice': function () {
-      var args;
-      this.set(ACTION_KEY, 'voice');
-      args = [].slice.call(arguments);
-      this.pubData(args);
-      this.exec();
+      var args = [].slice.call(arguments);
+      this.push(function () {
+        this.set(ACTION_KEY, 'voice');
+        this.pubData(args);
+        this.exec();
+        this.next();
+      });
       return this;
     },
     /**
@@ -147,9 +179,12 @@
      // TODO: Test more
      */
     'and': function () {
-      delete this[ACTION_KEY];
-      delete this[PUB_DATA_KEY];
-      delete this[SUB_DATA_KEY];
+      this.push(function () {
+        delete this[ACTION_KEY];
+        delete this[PUB_DATA_KEY];
+        delete this[SUB_DATA_KEY];
+        this.next();
+      });
       return this;
     },
     /**
@@ -158,9 +193,12 @@
      * @returns {Object<_Sauron>} this
      */
     'on': function (fn) {
-      this.set(ACTION_KEY, 'on');
-      this.subData(fn);
-      this.exec();
+      this.push(function () {
+        this.set(ACTION_KEY, 'on');
+        this.subData(fn);
+        this.exec();
+        this.next();
+      });
       return this;
     },
     /**
@@ -169,9 +207,12 @@
      * @returns {Object<_Sauron>} this
      */
     'off': function (fn) {
-      this.set(ACTION_KEY, 'off');
-      this.subData(fn);
-      this.exec();
+      this.push(function () {
+        this.set(ACTION_KEY, 'off');
+        this.subData(fn);
+        this.exec();
+        this.next();
+      });
       return this;
     },
     /**
@@ -180,14 +221,17 @@
      * @returns {Object<_Sauron>} this
      */
     'once': function (fn) {
-      // Subscribe to be called
-      this.on(function () {
-        // Collect arguments and call intended function
-        var args = [].slice.call(arguments);
-        fn.apply(this, args);
+      this.push(function () {
+        // Subscribe to be called
+        this.on(function () {
+          // Collect arguments and call intended function
+          var args = [].slice.call(arguments);
+          fn.apply(this, args);
 
-        // Unsubscribe after one call
-        this.off();
+          // Unsubscribe after one call
+          this.off();
+        });
+        this.next();
       });
       return this;
     },
@@ -215,7 +259,10 @@
      * @returns {Object<_Sauron>} this
      */
     'channel': function (channel) {
-      this.set(CHANNEL_KEY, channel);
+      this.push(function () {
+        this.set(CHANNEL_KEY, channel);
+        this.next();
+      });
       return this;
     },
     /**
@@ -226,7 +273,10 @@
      * @returns {Object<_Sauron>} this
      */
     'of': function (channel) {
-      this.set(CHANNEL_KEY, this.get(CHANNEL_KEY) + channel);
+      this.push(function () {
+        this.set(CHANNEL_KEY, this.get(CHANNEL_KEY) + channel);
+        this.next();
+      });
       return this;
     },
     /**
@@ -235,9 +285,12 @@
      * @returns {Object<_Sauron>} this
      */
     'subData': function (fn) {
-      if (fn) {
-        this.set(SUB_DATA_KEY, fn);
-      }
+      this.push(function () {
+        if (fn) {
+          this.set(SUB_DATA_KEY, fn);
+        }
+        this.next();
+      });
       return this;
     },
     /**
@@ -255,9 +308,12 @@
      * @returns {Object<_Sauron>} this
      */
     'pubData': function (data) {
-      if (data && data.length > 0) {
-        this.set(PUB_DATA_KEY, data);
-      }
+      this.push(function () {
+        if (data && data.length > 0) {
+          this.set(PUB_DATA_KEY, data);
+        }
+        this.next();
+      });
       return this;
     },
     /**
@@ -267,16 +323,22 @@
      // TODO: Test me
      */
     'saveData': function (data) {
-      if (this.get(ACTION_KEY) === 'voice') {
-        this.pubData(data);
-      } else {
-        this.subData.apply(this, data);
-      }
+      this.push(function () {
+        if (this.get(ACTION_KEY) === 'voice') {
+          this.pubData(data);
+        } else {
+          this.subData.apply(this, data);
+        }
+        this.next();
+      });
       return this;
     },
     // TODO: Test
     'debug': function (debug) {
-      this.set(DEBUG_KEY, debug);
+      this.push(function () {
+        this.set(DEBUG_KEY, debug);
+        this.next();
+      });
       return this;
     },
     // TODO: Test
@@ -323,39 +385,44 @@
    * @returns {Object<_Sauron>} this
    */
   _SauronProto._createExec = function (parentName, params) {
-    var action = this.get(ACTION_KEY),
-        createType = this.get(CREATE_TYPE_KEY),
-        createReqPrefix,
-    // We use a string for throwing errors if the
-        reqArr = [],
-        dataArgs = [].slice.call(arguments, 1),
-    // TODO: Rename to controller/createComplete/HtmlController
-        channel = 'create/' + createType + '/' + parentName,
-        that = this;
+    var dataArgs = [].slice.call(arguments, 1);
+    this.push(function () {
+      var action = this.get(ACTION_KEY),
+          createType = this.get(CREATE_TYPE_KEY),
+          createReqPrefix,
+      // We use a string for throwing errors if the
+          reqArr = [],
+      // TODO: Rename to controller/createComplete/HtmlController
+          channel = 'create/' + createType + '/' + parentName,
+          that = this;
 
-    // Set up the proper channel
-    that.channel(channel);
-
-    // If we are making new object, require it first
-    if( action === 'voice' && params ) {
-      createReqPrefix = 'mvc!' + (createType === 'controller' ? 'c' : 'm') + '/';
-
-      // TODO: Clean up
-      reqArr.push( createReqPrefix + parentName );
-      reqArr.push( createReqPrefix + params.name );
-    }
-
-    // Require the controller/model if requested
-    require(reqArr, function () {
-      // Must modify channel since require is async
-      var oldChannel = that.get(CHANNEL_KEY);
+      // Set up the proper channel
       that.channel(channel);
 
-      // Call the intended action
-      that[action].apply(that, dataArgs);
+      // If we are making new object, require it first
+      if( action === 'voice' && params ) {
+        createReqPrefix = 'mvc!' + (createType === 'controller' ? 'c' : 'm') + '/';
 
-      // Return to the current channel
-      that.channel(oldChannel);
+        // TODO: Clean up
+        reqArr.push( createReqPrefix + parentName );
+        reqArr.push( createReqPrefix + params.name );
+      }
+
+      // Require the controller/model if requested
+      require(reqArr, function () {
+        // Must modify channel since require is async
+        var oldChannel = that.get(CHANNEL_KEY);
+        that.channel(channel);
+
+        // Call the intended action
+        that[action].apply(that, dataArgs);
+
+        // Return to the current channel
+        that.channel(oldChannel);
+
+        // Call next item in the queue
+        that.next();
+      });
     });
 
     // Continue the fluent interface
@@ -368,8 +435,12 @@
    */
   _SauronProto.createController = function () {
     var args = [].slice.call(arguments);
-    this.set(CREATE_TYPE_KEY, 'controller');
-    return this._createExec.apply(this, args);
+    this.push(function () {
+      this.set(CREATE_TYPE_KEY, 'controller');
+      this._createExec.apply(this, args)
+      this.next();
+    });
+    return this;
   };
 
   /**
@@ -378,8 +449,12 @@
    */
   _SauronProto.createModel = function () {
     var args = [].slice.call(arguments);
-    this.set(CREATE_TYPE_KEY, 'model');
-    return this._createExec.apply(this, args);
+    this.push(function () {
+      this.set(CREATE_TYPE_KEY, 'model');
+      this._createExec.apply(this, args);
+      this.next();
+    })
+    return this;
   };
 
   // TODO: DRY with _createExec
@@ -389,17 +464,19 @@
    * @returns {Object<_Sauron>} this
    */
   _SauronProto._createCompleteExec = function (parentName) {
-    var action = this.get(ACTION_KEY),
-        createType = this.get(CREATE_TYPE_KEY),
-        dataArgs = [].slice.call(arguments, 1);
+    var dataArgs = [].slice.call(arguments, 1);
+    this.push(function () {
+      var action = this.get(ACTION_KEY),
+          createType = this.get(CREATE_TYPE_KEY);
 
-    // Set up the proper channel
-    // TODO: Rename to controller/createComplete/HtmlController
-    this.channel('createComplete/' + createType + '/' + parentName);
+      // Set up the proper channel
+      // TODO: Rename to controller/createComplete/HtmlController
+      this.channel('createComplete/' + createType + '/' + parentName);
 
-    // Call the intended action
-    this[action].apply(this, dataArgs);
-
+      // Call the intended action
+      this[action].apply(this, dataArgs);
+      this.next();
+    });
     return this;
   };
 
@@ -409,8 +486,12 @@
    */
   _SauronProto.createControllerComplete = function () {
     var args = [].slice.call(arguments);
-    this.set(CREATE_TYPE_KEY, 'controller');
-    return this._createCompleteExec.apply(this, args);
+    this.push(function () {
+      this.set(CREATE_TYPE_KEY, 'controller');
+      this._createCompleteExec.apply(this, args);
+      this.next();
+    });
+    return this;
   };
 
   /**
@@ -419,8 +500,12 @@
    */
   _SauronProto.createModelComplete = function () {
     var args = [].slice.call(arguments);
-    this.set(CREATE_TYPE_KEY, 'model');
-    return this._createCompleteExec.apply(this, args);
+    this.push(function () {
+      this.set(CREATE_TYPE_KEY, 'model');
+      this._createCompleteExec.apply(this, args);
+      this.next();
+    });
+    return this;
   };
   /** END: Sauron.create logic **/
 
@@ -431,22 +516,25 @@
    * @returns {Object<_Sauron>} this
    */
   _SauronProto._controllerExec = function () {
-    var action,
-        contrName = this.get(CONTROLLER_NAME_KEY),
-        contrMethod = this.get(CONTROLLER_METHOD_KEY),
-        args = [].slice.call(arguments);
+    var args = [].slice.call(arguments);
+    this.push(function () {
+      var action,
+          contrName = this.get(CONTROLLER_NAME_KEY),
+          contrMethod = this.get(CONTROLLER_METHOD_KEY);
 
-    // Set it to controller/controllerName/method
-    this.channel('controller/' + contrName + '/' + contrMethod);
-    this.saveData(args);
+      // Set it to controller/controllerName/method
+      this.channel('controller/' + contrName + '/' + contrMethod);
+      this.saveData(args);
 
-    if (contrName !== undefined && contrMethod !== undefined) {
-      // Collect action
-      action = this.get(ACTION_KEY);
+      if (contrName !== undefined && contrMethod !== undefined) {
+        // Collect action
+        action = this.get(ACTION_KEY);
 
-      // Invoke action
-      this[action]();
-    }
+        // Invoke action
+        this[action]();
+      }
+      this.next();
+    });
     return this;
   };
 
@@ -457,13 +545,16 @@
    */
   _SauronProto.controller = function (controllerName) {
     var dataArgs = [].slice.call(arguments, 1);
+    this.push(function () {
+      require(['mvc!c/' + controllerName], function () {
+        // Save the controller key
+        this.set(CONTROLLER_NAME_KEY, controllerName);
 
-    // Save the controller key
-    this.set(CONTROLLER_NAME_KEY, controllerName);
-
-    // Call controllerExec with reduced arguments
-    this._controllerExec.apply(this, dataArgs);
-
+        // Call controllerExec with reduced arguments
+        this._controllerExec.apply(this, dataArgs);
+        this.next();
+      });
+    });
     // Return for a fluent interface
     return this;
   };
@@ -475,21 +566,24 @@
    * @returns {Object<_Sauron>} this
    */
   _SauronProto._modelExec = function () {
-    var action,
-        modelName = this.get(MODEL_NAME_KEY),
-        modelMethod = this.get(MODEL_METHOD_KEY),
-        args = [].slice.call(arguments);
+    var args = [].slice.call(arguments);
+    this.push(function () {
+      var action,
+          modelName = this.get(MODEL_NAME_KEY),
+          modelMethod = this.get(MODEL_METHOD_KEY);
 
-    // Set it to controller/controllerName/method
-    this.channel('model/' + modelName + '/' + modelMethod);
-    this.saveData(args);
+      // Set it to controller/controllerName/method
+      this.channel('model/' + modelName + '/' + modelMethod);
+      this.saveData(args);
 
-    if (modelName !== undefined && modelMethod !== undefined) {
-      action = this.get(ACTION_KEY);
+      if (modelName !== undefined && modelMethod !== undefined) {
+        action = this.get(ACTION_KEY);
 
-      // Invoke action
-      this[action]();
-    }
+        // Invoke action
+        this[action]();
+      }
+      this.next();
+    });
     return this;
   };
 
@@ -500,12 +594,13 @@
    */
   _SauronProto.model = function (modelName) {
     var dataArgs = [].slice.call(arguments, 1);
+    this.push(function () {
+      // Save the controller key
+      this.set(MODEL_NAME_KEY, modelName);
 
-    // Save the controller key
-    this.set(MODEL_NAME_KEY, modelName);
-
-    this._modelExec.apply(this, dataArgs);
-
+      this._modelExec.apply(this, dataArgs);
+      this.next();
+    });
     // Return for a fluent interface
     return this;
   };
@@ -582,12 +677,15 @@
         (function(fullMethod, method_key, exec_key){
           _SauronProto[fullMethod] = function () {
             var args = [].slice.call(arguments);
+            this.push(function () {
+              // Set up the controller/model method
+              this.set(method_key, fullMethod);
 
-            // Set up the controller/model method
-            this.set(method_key, fullMethod);
-
-            // Invoke execution method
-            this[exec_key].apply(this, args);
+              // Invoke execution method
+              this[exec_key].apply(this, args);
+              
+              this.next();
+            });
 
             return this;
           };
