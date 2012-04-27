@@ -229,57 +229,55 @@ require(['./Sauron.js'], function (Sauron) {
     });
   });
 
-  // var _createRequire = [],
-      // _createControllerCount = 0,
-      // _createModelCount = 0;
+  var _createRequire = [],
+      _createControllerCount = 0,
+      _createModelCount = 0;
   // window.require = function (paths, fn) {
     // _createRequire = paths;
     // fn();
   // };
-  // describe('Create controller/model sugar', function () {
-    // var _createControllerArgs = [],
-        // _createModelArgs = [];
+  describe('Create controller/model sugar', function () {
+    var _createControllerArgs = [],
+        _createModelArgs = [];
 
-    // Sauron.on().createController('HtmlController', function () {
-      // _createControllerArgs = [].slice.call(arguments);
-      // _createControllerCount += 1;
-      // this.createControllerComplete('HtmlController', '567', 890, '...');
-    // });
-    // Sauron.createModel('CrudModel').on(function () {
-      // _createModelArgs = [].slice.call(arguments);
-      // _createModelCount += 1;
-      // this.createModelComplete('CrudModel', 'm', 'n', 'o');
-    // });
-    // it('properly separates controller creation channel', function (callback) {
-      // Sauron.createControllerComplete('HtmlController').on(function () {
-        // var _createControllerCompleteArgs = [].slice.call(arguments);
-        // assert(1, _createControllerCount);
-        // assert(0, _createModelCount);
-        // assert(2, _createRequire.length);
+    Sauron.on().createController('HtmlController', function (callback) {
+      _createControllerArgs = [].slice.call(arguments);
+      _createControllerCount += 1;
+      callback('567', 890, '...');
+    });
+    Sauron.on().createModel('CrudModel', function (callback) {
+    console.log(arguments);
+      _createModelArgs = [].slice.call(arguments);
+      _createModelCount += 1;
+      // callback('m', 'n', 'o');
+    });
+    it('properly separates controller creation channel', function (callback) {
+      Sauron.createController('HtmlController', function () {
+        var _createControllerCompleteArgs = [].slice.call(arguments);
+        assert(1, _createControllerCount);
+        assert(0, _createModelCount);
+        assert(2, _createRequire.length);
         // assert('mvc!c/HtmlController', _createRequire[0]);
         // assert('mvc!c/bleh', _createRequire[1]);
-        // assertDeepEqual([{'name': 'bleh'}, 'om nom', 30], _createControllerArgs);
-        // assertDeepEqual(['567', 890, '...'], _createControllerCompleteArgs);
-        // callback();
-      // });
-      // Sauron.createController('HtmlController', {'name': 'bleh'}, 'om nom', 30);
-    // });
-    // it('and the model creation channel', function (callback) {
-      // Sauron.on(function () {
-        // var _createModelCompleteArgs = [].slice.call(arguments);
-        // assert(1, _createControllerCount);
-        // assert(1, _createModelCount);
-        // assert(2, _createRequire.length);
+        assertDeepEqual([{'name': 'bleh'}, 'om nom', 30], _createControllerArgs);
+        assertDeepEqual(['567', 890, '...'], _createControllerCompleteArgs);
+        callback();
+      }, {'name': 'bleh'}, 'om nom', 30);
+    });
+    it('and the model creation channel', function (callback) {
+      Sauron.createModel('CrudModel', function () {
+        var _createModelCompleteArgs = [].slice.call(arguments);
+        assert(1, _createControllerCount);
+        assert(1, _createModelCount);
+        assert(2, _createRequire.length);
         // assert('mvc!m/CrudModel', _createRequire[0]);
         // assert('mvc!m/blah', _createRequire[1]);
-        // assertDeepEqual([{'name': 'blah'}, 'x', 'y'], _createModelArgs);
-        // assertDeepEqual(['m', 'n', 'o'], _createModelCompleteArgs);
-        // callback();
-      // }).createModelComplete('CrudModel')
-        // .voice()
-        // .createModel('CrudModel', {'name': 'blah'}, 'x', 'y');
-    // });
-  // });
+        assertDeepEqual([{'name': 'blah'}, 'x', 'y'], _createModelArgs);
+        assertDeepEqual(['m', 'n', 'o'], _createModelCompleteArgs);
+        callback();
+      }, {'name': 'blah'}, 'x', 'y');
+    });
+  });
 
   // describe('Controller start/stop sugar', function () {
     // var _xyzStartCount = 0,

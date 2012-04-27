@@ -9,12 +9,15 @@
 // These sentences are getting a bit lengthy o_o
 
 // FUCK CHAINING
-// TODO: Document this...
 
 define(function () {
   var MiddleEarth = {},
       Sauron = {};
 
+  /**
+   * Found this goodie on wiki: (Palantir == Seeing Stone)
+   * http://en.wikipedia.org/wiki/Palant%C3%ADr
+   */
   function Palantir() {
     this.stack = [];
   }
@@ -22,11 +25,21 @@ define(function () {
     return this.stack.pop();
   }
   var PalantirProto = Palantir.prototype = {
+    /**
+     * Retrieval function for the current channel
+     * @returns {String}
+     */
     'channel': function () {
       var stack = this.stack,
+          prefix = this.prefix,
           controller = this.controller,
           model = this.model,
           channel = stack[stack.length - 1] || '';
+
+      // If there is a prefix, use it
+      if (prefix !== undefined) {
+        channel = prefix + '/' + channel;
+      }
 
       // If there is a controller, prefix the channel
       if (controller !== undefined) {
@@ -38,6 +51,10 @@ define(function () {
 
       return channel;
     },
+    /**
+     * Maintenance functions for the stack of channels
+     * @returns {String}
+     */
     'pushStack': function (channel) {
       this.stack.push(channel);
     },
@@ -49,6 +66,12 @@ define(function () {
       this.pushStack(channel);
       return this.clone();
     },
+    /**
+     * Subscribing function for event listeners
+     * @param {String} [subchannel] Subchannel to listen to
+     * @param {Function} [fn] Function to subscribe with
+     * @returns {this}
+     */
     'on': function (subchannel, fn) {
       // Move the track to do an 'on' action
       this.method = 'on';
@@ -93,6 +116,12 @@ define(function () {
       // Return a clone
       return this.clone();
     },
+    /**
+     * Unsubscribing function for event listeners
+     * @param {String} [subchannel] Subchannel to unsubscribe from to
+     * @param {Function} [fn] Function to remove subscription on
+     * @returns {this}
+     */
     'off': function (subchannel, fn) {
       // Move the track to do an 'off' action
       this.method = 'off';
@@ -134,9 +163,19 @@ define(function () {
       // Return a clone
       return this.clone();
     },
-    'voice': function () {
+    /**
+     * Voice/emit command for Sauron
+     * @param {String|null} subchannel Subchannel to call on. If it is falsy, it will be skipped
+     * @param {Mixed} [param] Parameter to voice to the channel. There can be infinite of these
+     */
+    'voice': function (subchannel/*, param, ... */) {
+      // If there is a subchannel, use it
+      if (subchannel) {
+        this.of(subchannel);
+      }
+
       // Collect the data and channel
-      var args = [].slice.call(arguments),
+      var args = [].slice.call(arguments, 1),
           channelName = this.channel(),
           channel = MiddleEarth[channelName] || [],
           subscriber,
@@ -154,6 +193,10 @@ define(function () {
       // This is a terminal event so return Sauron
       return Sauron;
     },
+    /**
+     * Returns a cloned copy of this
+     * @returns {this}
+     */
     'clone': function () {
       var that = this,
           retObj = new Palantir(),
@@ -171,6 +214,12 @@ define(function () {
       // Return the modified item
       return retObj;
     },
+    /**
+     * Suguar subscribe function that listens to an event exactly once
+     * @param {String} [subchannel] Subchannel to listen to
+     * @param {Function} [fn] Function to subscribe with
+     * @returns {this}
+     */
     'once': function (subchannel, fn) {
       // Move the track to do an 'on' action
       this.method = 'once';
@@ -206,12 +255,32 @@ define(function () {
       return this.clone();
     },
 
+    // New hotness for creation/deletion
+    'make': function () {
+      this.prefix = 'make';
+    },
+    'destroy': function () {
+      this.prefix = 'destroy';
+    },
+
     // Controller methods
     'controller': function (controller) {
       this.controller = controller;
       return this.clone();
     },
-    'createController': execFn('createController'),
+    'createController': function (controller) {
+      this.make();
+      this.controller(controller);
+
+      if (arguments.length > 0) {
+        var args = [].slice.call(arguments),
+            method = this.method || 'voice';
+        return this[method].apply(this, args);
+      } else {
+      // Otherwise, return a clone
+        return this.clone();
+      }
+    },
     'start': execFn('start'),
     'stop': execFn('stop'),
 
@@ -220,7 +289,19 @@ define(function () {
       this.model = model;
       return this.clone();
     },
-    'createModel': execFn('createModel'),
+    'createModel': function (model) {
+      this.make();
+      this.model(model);
+
+      if (arguments.length > 0) {
+        var args = [].slice.call(arguments),
+            method = this.method || 'voice';
+        return this[method].apply(this, args);
+      } else {
+      // Otherwise, return a clone
+        return this.clone();
+      }
+    },
     'create': execFn('create'),
     'retrieve': execFn('retrieve'),
     'update': execFn('update'),
