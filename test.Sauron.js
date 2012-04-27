@@ -63,6 +63,26 @@ require(['./Sauron.js'], function (Sauron) {
       });
     });
 
+    var onVoiceData1A = {'a': 'b'},
+        onVoiceData1B = {'c': 'd'},
+        onVoiceData2A,
+        onVoiceData2B;
+    describe('"on"', function () {
+      it('receives data passed by "voice"', function (done) {
+        Sauron.of('onVoiceChannel').on(function (dataA, dataB) {
+          onVoiceData2A = dataA;
+          onVoiceData2B = dataB;
+        });
+        Sauron.of('onVoiceChannel').voice(onVoiceData1A, onVoiceData1B);
+
+        setTimeout(function () {
+          assert(onVoiceData1A, onVoiceData2A);
+          assert(onVoiceData1B, onVoiceData2B);
+          done();
+        }, 100);
+      });
+    });
+
     // Another counter for an assert
     var onceCount = 0;
     describe('#once()', function () {

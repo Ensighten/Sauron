@@ -9,6 +9,7 @@
 // These sentences are getting a bit lengthy o_o
 
 // FUCK CHAINING
+// TODO: Document this...
 
 define(function () {
   var MiddleEarth = {},
