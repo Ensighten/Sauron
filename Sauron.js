@@ -10,7 +10,7 @@
 
 // FUCK CHAINING
 
-define('Sauron', function () {
+define(function () {
   var MiddleEarth = {},
       Sauron = {};
 
@@ -169,7 +169,46 @@ define('Sauron', function () {
       // Return the modified item
       return retObj;
     }
+
+    // Controller methods
+    'controller': function (controller) {
+      this.controller = controller;
+      return this.clone();
+    },
+    'start': execFn('start'),
+    'stop': execFn('stop'),
+
+    // Model methods
+    'model': function (model) {
+      this.model = model;
+      return this.clone();
+    },
+    'create': execFn('create'),
+    'retrieve': execFn('retrieve'),
+    'update': execFn('update'),
+    'delete': execFn('delete'),
+    'createEvent': execFn('createEvent'),
+    'retrieveEvent': execFn('retrieveEvent'),
+    'updateEvent': execFn('updateEvent'),
+    'deleteEvent': execFn('deleteEvent'),
   };
+
+  function execFn(subchannel) {
+    return function () {
+      // Add subchannel to the channel
+      this.of(subchannel);
+
+      // If there are arguments, perform the normal action
+      if (arguments.length > 0) {
+        var args = [].slice.call(arguments),
+            method = this.method || 'voice';
+        return this[method].apply(this, args);
+      } else {
+      // Otherwise, return a clone
+        return this.clone();
+      }
+    };
+  }
 
   // Copy over all of the items in the Palantir prototype to Sauron such that each one is run on a fresh Palantir
   for (key in PalatirProto) {
