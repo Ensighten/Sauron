@@ -77,7 +77,8 @@ define(function () {
             MiddleEarth[channelName] = channel;
           }
 
-          // Save the context to the function
+          // Save the function to this and context to the function
+          this.fn = fn;
           fn.SAURON_CONTEXT = this;
 
           // Add the function to the channel
@@ -168,13 +169,48 @@ define(function () {
 
       // Return the modified item
       return retObj;
-    }
+    },
+    'once': function (subchannel, fn) {
+      // Move the track to do an 'on' action
+      this.method = 'once';
+
+      // If there are arguments
+      if (arguments.length > 0) {
+        // If there is only one argument and subchannel is a function, promote the subchannel to fn
+        if (arguments.length === 1 && typeof subchannel === 'function') {
+          fn = subchannel;
+          subchannel = null;
+        }
+
+        // If there is no function, throw an error
+        if (typeof fn !== 'function') {
+          throw new Error('Sauron.once expected a function, received: ' + fn.toString);
+        }
+
+        // Upcast the function for subscription
+        var subFn = function () {
+          // Unsubcribe from this
+          this.off();
+
+          // Call the function in this context
+          var args = [].slice.call(arguments);
+          return fn.apply(this, args);
+        };
+
+        // Call .on and return
+        return this.on(subchannel, subFn);
+      }
+
+      // Return a clone
+      return this.clone();
+    },
 
     // Controller methods
     'controller': function (controller) {
       this.controller = controller;
       return this.clone();
     },
+    'createController': execFn('createController'),
     'start': execFn('start'),
     'stop': execFn('stop'),
 
@@ -183,6 +219,7 @@ define(function () {
       this.model = model;
       return this.clone();
     },
+    'createModel': execFn('createModel'),
     'create': execFn('create'),
     'retrieve': execFn('retrieve'),
     'update': execFn('update'),
@@ -190,7 +227,7 @@ define(function () {
     'createEvent': execFn('createEvent'),
     'retrieveEvent': execFn('retrieveEvent'),
     'updateEvent': execFn('updateEvent'),
-    'deleteEvent': execFn('deleteEvent'),
+    'deleteEvent': execFn('deleteEvent')
   };
 
   function execFn(subchannel) {
@@ -211,7 +248,7 @@ define(function () {
   }
 
   // Copy over all of the items in the Palantir prototype to Sauron such that each one is run on a fresh Palantir
-  for (key in PalatirProto) {
+  for (key in PalantirProto) {
     if (PalantirProto.hasOwnProperty(key)) {
       (function (fn) {
         Sauron[key] = function () {
