@@ -33,32 +33,20 @@
     <div id="mocha"></div>
 
     <script src="Skeleton.js"></script>
-    <script src="../src/Sauron.js"></script>
+    <script src="require.js"></script>
     <script src="Sauron.test.js"></script>
-    <script>
-      window.onload = function(){
-        var runner = mocha.run();
-        // runner.globals(['foo', 'bar', 'baz']);
 
-        // runner.on('test end', function(test){
-        // console.log(test.fullTitle());
-        // });
-      };
-    </script>
-
-    <script src="https://raw.github.com/twolfson/File-Watcher/master/src/watcher.js"></script>
-    <script src="https://raw.github.com/twolfson/Resource-Collector/master/src/collector.js"></script>
     <script>
-        (function () {
-          if (location.hostname === 'localhost') {
-             var watcher = new FileWatcher(),
-                 resources = ResourceCollector.collect();
-             watcher.addListener(function () {
-               location.reload();
-             });
-             watcher.watch(resources);
-          }
-        }());
+      require(["https://raw.github.com/twolfson/File-Watcher/master/src/watcher.js", "https://raw.github.com/twolfson/Resource-Collector/master/src/collector.js"], function (FileWatcher, ResourceCollector) {
+        if (location.hostname === 'localhost') {
+           var watcher = new FileWatcher(),
+               resources = ResourceCollector.collect();
+           watcher.addListener(function () {
+             location.reload();
+           });
+           watcher.watch(resources);
+        }
+      });
     </script>
   </body>
 </html>
