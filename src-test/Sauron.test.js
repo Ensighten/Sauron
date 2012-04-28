@@ -249,6 +249,14 @@ suite.addBatch({
       });
       Sauron.of('a').voice('separateChannelB', 'woot');
       assert(notCalled);
+    },
+    '.createController properly separates channels': function () {
+      var notCalled = true;
+      Sauron.on().createController('controllerA', function () {
+        notCalled = false;
+      });
+      Sauron.createController('controllerB', 'woot');
+      assert(notCalled);
     }
   }
 });

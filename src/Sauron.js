@@ -104,7 +104,7 @@ define(function () {
         }
 
         // If there is a subchannel, add it to the current channel
-        if (subchannel) {
+        if (subchannel || subchannel === 0) {
           that = that.of(subchannel);
         }
 
@@ -162,7 +162,7 @@ define(function () {
         }
 
         // If there is a subchannel, add it to the current channel
-        if (subchannel) {
+        if (subchannel || subchannel === 0) {
           that = that.of(subchannel);
         }
 
@@ -200,7 +200,7 @@ define(function () {
       var that = this.clone();
 
       // If there is a subchannel, use it
-      if (subchannel) {
+      if (subchannel || subchannel === 0) {
         that = that.of(subchannel);
       }
 
@@ -347,8 +347,8 @@ define(function () {
     'createController': function (controller) {
       var that = this.clone();
 
-      that.make();
-      that.controller(controller);
+      that = that.make();
+      that = that.controller(controller);
 
       var args = [].slice.call(arguments, 1),
           method = that.method || 'voice';
@@ -365,7 +365,7 @@ define(function () {
       that._model = model;
 
       // this.log('MODEL UPDATED TO:', model);
-      that.log('CHANNEL UPDATED TO:', this.channel());
+      that.log('CHANNEL UPDATED TO:', that.channel());
 
       if (arguments.length > 1) {
         var args = [].slice.call(arguments, 1),
@@ -380,8 +380,8 @@ define(function () {
     'createModel': function (model) {
       var that = this.clone();
 
-      that.make();
-      that.model(model);
+      that = that.make();
+      that = that.model(model);
 
       var args = [].slice.call(arguments, 1),
           method = that.method || 'voice';
