@@ -21,9 +21,6 @@ define(function () {
   function Palantir() {
     this.stack = [];
   }
-  function popStack() {
-    return this.stack.pop();
-  }
   var PalantirProto = Palantir.prototype = {
     /**
      * Retrieval function for the current channel
@@ -56,19 +53,35 @@ define(function () {
       return channel;
     },
     /**
-     * Maintenance functions for the stack of channels
-     * @returns {String}
+     * Adds a new channel to the stack of channels
+     * @param {String} channel Channel to add to the stack
+     * @returns {this}
      */
     'pushStack': function (channel) {
       this.stack.push(channel);
       return this;
     },
-    'popStack': popStack,
+    /**
+     * Removes and returns the last channel on the stack
+     * @returns {String|undefined}
+     */
+    'popStack':
+      return this.stack.pop();
+    },
+    /**
+     * Removes and the last channel on the stack
+     * @returns {this.clone}
+     */
     'end': function () {
       var that = this.clone();
-      popStack.call(that);
+      that.popStack();
       return that;
     },
+    /**
+     * Adds a new subchannel to the current channel
+     * @param {String}
+     * @returns {this.clone}
+     */
     'of': function (subchannel) {
       var that = this.clone(),
           lastChannel = that.channel(true),
@@ -84,7 +97,7 @@ define(function () {
      * Subscribing function for event listeners
      * @param {String} [subchannel] Subchannel to listen to
      * @param {Function} [fn] Function to subscribe with
-     * @returns {this.clone}
+     * @returns {Sauron|this.clone}
      */
     'on': function (subchannel, fn) {
       var that = this.clone();
@@ -141,7 +154,7 @@ define(function () {
      * Unsubscribing function for event listeners
      * @param {String} [subchannel] Subchannel to unsubscribe from to
      * @param {Function} [fn] Function to remove subscription on
-     * @returns {this.clone}
+     * @returns {Sauron|this.clone}
      */
     'off': function (subchannel, fn) {
       var that = this.clone();
@@ -195,6 +208,7 @@ define(function () {
      * Voice/emit command for Sauron
      * @param {String|null} subchannel Subchannel to call on. If it is falsy, it will be skipped
      * @param {Mixed} [param] Parameter to voice to the channel. There can be infinite of these
+     * @returns {Sauron}
      */
     'voice': function (subchannel/*, param, ... */) {
       var that = this.clone();
@@ -212,7 +226,7 @@ define(function () {
           i = 0,
           len = channel.length;
 
-      that.log('EXECUTING FUNCTIONS IN: ', channelName);
+      that.log('EXECUTING FUNCTIONS IN: ', channelName, '(' + len + ' subscribers)');
 
       // Loop through the subscribers
       for (; i < len; i++) {
@@ -227,7 +241,7 @@ define(function () {
     },
     /**
      * Returns a cloned copy of this
-     * @returns {this}
+     * @returns {this.clone}
      */
     'clone': function () {
       var that = this,
@@ -250,7 +264,7 @@ define(function () {
      * Suguar subscribe function that listens to an event exactly once
      * @param {String} [subchannel] Subchannel to listen to
      * @param {Function} [fn] Function to subscribe with
-     * @returns {this}
+     * @returns {this.clone}
      */
     'once': function (subchannel, fn) {
       var that = this.clone();
@@ -326,6 +340,12 @@ define(function () {
     },
 
     // Controller methods
+    /**
+     * Fluent method for calling out a controller
+     * @param {String} controller Name of the controller to invoke
+     * @param {Mixed} * If there are any arguments, they will be passed to (on, off, once, voice) for invocation
+     * @returns {Mixed} If there are more arguments than controller, the (on, off, once, voice) response will be returned. Otherwise, this.clone
+     */
     'controller': function (controller) {
       var that = this.clone();
 
@@ -397,7 +417,11 @@ define(function () {
     'updateEvent': execFn('updateEvent'),
     'deleteEvent': execFn('deleteEvent'),
 
-    // Helper function for error first callbacks
+    /**
+     * Helper function for error first callbacks. If an error occurs, we will log it and not call the function.
+     * @param {Function} fn Function to remove error for
+     * @returns {Function}
+     */
     'noError': function (fn) {
       return function (err) {
         // If an error occurred, log it and don't do anything else

@@ -1,0 +1,18 @@
+{
+  "author": "Todd Wolfson <todd.wolfson@ensighten.com> (http://twolfson.com/)",
+  "name": "Sauron",
+  "description": "Mediator pattern for Ensighten's client-side MVC framework",
+  "version": "1.1.0",
+  "homepage": "https://github.com/Ensighten/Sauron",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Ensighten/Sauron.git"
+  },
+  "main": "src/Sauron.js",
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {}
+}
