@@ -109,6 +109,31 @@ suite.addBatch({
   }
 });
 
+// Gotchas
+suite.addBatch({
+  'A Sauron instance that is namespaced': {
+    topic: function () {
+      return Sauron.of('hello');
+    },
+    'that has been namespaced once and triggered': {
+      topic: function (SauronNS) {
+        SauronNS.of('world').voice(null, 'woot');
+        return SauronNS;
+      },
+      'and is namespaced again': {
+        'does not utilize the previously nested namespace': function (SauronNS) {
+          var called = false;
+          Sauron.of('hello').of('zebra').on(function () {
+            called = true;
+          });
+          SauronNS.of('zebra').voice(null, 'woot');
+          assert(called);
+        }
+      }
+    }
+  }
+});
+
 function worksProperly(mvcType, methodName) {
   return {
     'works properly': function () {
@@ -208,6 +233,22 @@ suite.addBatch({
       Sauron.voice('onceTest');
       Sauron.voice('onceTest');
       assert(count === 1);
+    },
+    'properly separates channels': function () {
+      var notCalled = true;
+      Sauron.on('separateChannelA', function () {
+        notCalled = false;
+      });
+      Sauron.voice('separateChannelB', 'woot');
+      assert(notCalled);
+    },
+    'properly separates nested channels': function () {
+      var notCalled = true;
+      Sauron.of('a').on('separateChannelA', function () {
+        notCalled = false;
+      });
+      Sauron.of('a').voice('separateChannelB', 'woot');
+      assert(notCalled);
     }
   }
 });

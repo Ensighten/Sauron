@@ -61,30 +61,38 @@ define(function () {
      */
     'pushStack': function (channel) {
       this.stack.push(channel);
+      return this;
     },
     'popStack': popStack,
-    'end': popStack,
+    'end': function () {
+      var that = this.clone();
+      popStack.call(that);
+      return that;
+    },
     'of': function (subchannel) {
-      var lastChannel = this.channel(true),
+      var that = this.clone(),
+          lastChannel = that.channel(true),
           channel = lastChannel + '/' + subchannel;
 
-      this.pushStack(channel);
+      that.pushStack(channel);
 
-      this.log('CHANNEL EDITED: ', this.channel());
+      that.log('CHANNEL EDITED: ', that.channel());
 
-      return this.clone();
+      return that;
     },
     /**
      * Subscribing function for event listeners
      * @param {String} [subchannel] Subchannel to listen to
      * @param {Function} [fn] Function to subscribe with
-     * @returns {this}
+     * @returns {this.clone}
      */
     'on': function (subchannel, fn) {
+      var that = this.clone();
+
       // Move the track to do an 'on' action
-      if (this.method !== 'on') {
-        this.method = 'on';
-        this.log('METHOD CHANGED TO: on');
+      if (that.method !== 'on') {
+        that.method = 'on';
+        that.log('METHOD CHANGED TO: on');
       }
 
       // If there are are arguments
@@ -97,16 +105,16 @@ define(function () {
 
         // If there is a subchannel, add it to the current channel
         if (subchannel) {
-          this.of(subchannel);
+          that = that.of(subchannel);
         }
 
         // If there is a function
         if (fn) {
           // Get the proper channel
-          var channelName = this.channel(),
+          var channelName = that.channel(),
               channel = MiddleEarth[channelName];
 
-          this.log('FUNCTION ADDED TO: ', channelName);
+          that.log('FUNCTION ADDED TO: ', channelName);
 
           // If the channel does not exist, create it
           if (channel === undefined) {
@@ -115,8 +123,8 @@ define(function () {
           }
 
           // Save the function to this and context to the function
-          this.fn = fn;
-          fn.SAURON_CONTEXT = this;
+          that.fn = fn;
+          fn.SAURON_CONTEXT = that;
 
           // Add the function to the channel
           channel.push(fn);
@@ -127,23 +135,25 @@ define(function () {
       }
 
       // Return a clone
-      return this.clone();
+      return that;
     },
     /**
      * Unsubscribing function for event listeners
      * @param {String} [subchannel] Subchannel to unsubscribe from to
      * @param {Function} [fn] Function to remove subscription on
-     * @returns {this}
+     * @returns {this.clone}
      */
     'off': function (subchannel, fn) {
-      // Move the track to do an 'off' action
-      if (this.method !== 'off') {
-        this.method = 'off';
-        this.log('METHOD CHANGED TO: off');
-      }
+      var that = this.clone();
 
+      // Move the track to do an 'off' action
+      if (that.method !== 'off') {
+        that.method = 'off';
+        that.log('METHOD CHANGED TO: off');
+      }
       // If there are are arguments or there is a function
-      fn = fn || this.fn;
+      fn = fn || that.fn;
+
       if (arguments.length > 0 || fn) {
         // If there is only one argument and subchannel is a function, promote the subchannel to fn
         if (arguments.length === 1 && typeof subchannel === 'function') {
@@ -153,17 +163,17 @@ define(function () {
 
         // If there is a subchannel, add it to the current channel
         if (subchannel) {
-          this.of(subchannel);
+          that = that.of(subchannel);
         }
 
         // If there is a function
         if (fn) {
           // Get the proper channel
-          var channelName = this.channel(),
+          var channelName = that.channel(),
               channel = MiddleEarth[channelName] || [],
               i = channel.length;
 
-          this.log('REMOVING FUNCTION FROM: ', channelName);
+          that.log('REMOVING FUNCTION FROM: ', channelName);
 
           // Loop through the subscribers
           while (i--) {
@@ -179,7 +189,7 @@ define(function () {
       }
 
       // Return a clone
-      return this.clone();
+      return that;
     },
     /**
      * Voice/emit command for Sauron
@@ -187,20 +197,22 @@ define(function () {
      * @param {Mixed} [param] Parameter to voice to the channel. There can be infinite of these
      */
     'voice': function (subchannel/*, param, ... */) {
+      var that = this.clone();
+
       // If there is a subchannel, use it
       if (subchannel) {
-        this.of(subchannel);
+        that = that.of(subchannel);
       }
 
       // Collect the data and channel
       var args = [].slice.call(arguments, 1),
-          channelName = this.channel(),
+          channelName = that.channel(),
           channel = MiddleEarth[channelName] || [],
           subscriber,
           i = 0,
           len = channel.length;
 
-      this.log('EXECUTING FUNCTIONS IN: ', channelName);
+      that.log('EXECUTING FUNCTIONS IN: ', channelName);
 
       // Loop through the subscribers
       for (; i < len; i++) {
@@ -241,8 +253,10 @@ define(function () {
      * @returns {this}
      */
     'once': function (subchannel, fn) {
+      var that = this.clone();
+
       // Move the track to do an 'on' action
-      this.method = 'once';
+      that.method = 'once';
 
       // If there are arguments
       if (arguments.length > 0) {
@@ -268,99 +282,111 @@ define(function () {
         };
 
         // Call .on and return
-        return this.on(subchannel, subFn);
+        return that.on(subchannel, subFn);;
       }
 
       // Return a clone
-      return this.clone();
+      return that;
     },
 
     // New hotness for creation/deletion
     'make': function () {
-      this.log('PREFIX UPDATED TO: make');
-      this._prefix = 'make';
+      var that = this.clone();
+
+      that.log('PREFIX UPDATED TO: make');
+      that._prefix = 'make';
 
       // If there are arguments, perform the normal action
       if (arguments.length > 0) {
         var args = [].slice.call(arguments),
-            method = this.method || 'voice';
+            method = that.method || 'voice';
 
-        return this[method].apply(this, args);
+        return that[method].apply(that, args);
       } else {
-      // Otherwise, return a clone
-        return this.clone();
+      // Otherwise, return that
+        return that;
       }
     },
     'destroy': function () {
-      this.log('PREFIX UPDATED TO: destroy');
-      this._prefix = 'destroy';
+      var that = this.clone();
+
+      that.log('PREFIX UPDATED TO: destroy');
+      that._prefix = 'destroy';
 
       // If there are arguments, perform the normal action
       if (arguments.length > 0) {
         var args = [].slice.call(arguments),
-            method = this.method || 'voice';
+            method = that.method || 'voice';
 
-        return this[method].apply(this, args);
+        return that[method].apply(that, args);
       } else {
-      // Otherwise, return a clone
-        return this.clone();
+      // Otherwise, return that
+        return that;
       }
     },
 
     // Controller methods
     'controller': function (controller) {
-      this._controller = controller;
+      var that = this.clone();
+
+      that._controller = controller;
 
       // this.log('CONTROLLER UPDATED TO:', controller);
-      this.log('CHANNEL UPDATED TO:', this.channel());
+      that.log('CHANNEL UPDATED TO:', that.channel());
 
       if (arguments.length > 1) {
         var args = [].slice.call(arguments, 1),
-            method = this.method || 'voice';
+            method = that.method || 'voice';
         args.unshift(null);
-        return this[method].apply(this, args);
+        return that[method].apply(that, args);
       } else {
       // Otherwise, return a clone
-        return this.clone();
+        return that;
       }
     },
     'createController': function (controller) {
-      this.make();
-      this.controller(controller);
+      var that = this.clone();
+
+      that.make();
+      that.controller(controller);
 
       var args = [].slice.call(arguments, 1),
-          method = this.method || 'voice';
+          method = that.method || 'voice';
       args.unshift(null);
-      return this[method].apply(this, args);
+      return that[method].apply(that, args);
     },
     'start': execFn('start'),
     'stop': execFn('stop'),
 
     // Model methods
     'model': function (model) {
-      this._model = model;
+      var that = this.clone();
+
+      that._model = model;
 
       // this.log('MODEL UPDATED TO:', model);
-      this.log('CHANNEL UPDATED TO:', this.channel());
+      that.log('CHANNEL UPDATED TO:', this.channel());
 
       if (arguments.length > 1) {
         var args = [].slice.call(arguments, 1),
-            method = this.method || 'voice';
+            method = that.method || 'voice';
         args.unshift(null);
-        return this[method].apply(this, args);
+        return that[method].apply(that, args);
       } else {
       // Otherwise, return a clone
-        return this.clone();
+        return that;
       }
     },
     'createModel': function (model) {
-      this.make();
-      this.model(model);
+      var that = this.clone();
+
+      that.make();
+      that.model(model);
 
       var args = [].slice.call(arguments, 1),
-          method = this.method || 'voice';
+          method = that.method || 'voice';
       args.unshift(null);
-      return this[method].apply(this, args);
+      return that[method].apply(that, args);
     },
     'create': execFn('create'),
     'retrieve': execFn('retrieve'),
@@ -371,6 +397,18 @@ define(function () {
     'updateEvent': execFn('updateEvent'),
     'deleteEvent': execFn('deleteEvent'),
 
+    // Helper function for error first callbacks
+    'noError': function (fn) {
+      return function (err) {
+        // If an error occurred, log it and don't do anything else
+        if (err) { return console.error(err); }
+
+        // Otherwise, callback with the remaining arguments
+        var args = [].slice.call(arguments, 1);
+        fn.apply(this, args);
+      };
+    },
+
     // Debug functions
     /**
      * Setter function for debugging
@@ -378,8 +416,9 @@ define(function () {
      * @returns {this}
      */
     'debug': function (debug) {
-      this._debug = debug;
-      return this;
+      var that = this.clone();
+      that._debug = debug;
+      return that;
     },
     /**
      * Debug logger for this object
@@ -390,26 +429,28 @@ define(function () {
         console.log.apply(console, arguments);
       }
       return this;
-    },
+    }
   };
 
   function execFn(subchannel) {
     return function () {
+      var that = this.clone();
+
       // Add subchannel to the channel
-      this.of(subchannel);
+      that = that.of(subchannel);
 
       // If there are arguments, perform the normal action
       if (arguments.length > 0) {
         var args = [].slice.call(arguments),
-            method = this.method || 'voice';
+            method = that.method || 'voice';
 
         // If the method is voice, unshift an empty subchannel
         args.unshift(null);
 
-        return this[method].apply(this, args);
+        return that[method].apply(that, args);
       } else {
       // Otherwise, return a clone
-        return this.clone();
+        return that;
       }
     };
   }
