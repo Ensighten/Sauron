@@ -141,6 +141,15 @@ worksProperly.controller = function (methodName) {
 // Controller sugar
 suite.addBatch({
   'Sauron': {
+    'has a method for creating controllers': function () {
+      var data = {'a': 'b'},
+          actualData;
+      Sauron.on().createController('HtmlController', function (data) {
+        actualData = data;
+      });
+      Sauron.createController('HtmlController', data);
+      assert(data === actualData);
+    },
     'has a start method for models that': worksProperly.controller('start'),
     'has a stop method for models that': worksProperly.controller('stop')
   }
@@ -152,6 +161,15 @@ worksProperly.model = function (methodName) {
 };
 suite.addBatch({
   'Sauron': {
+    'has a method for creating models': function () {
+      var data = {'a': 'b'},
+          actualData;
+      Sauron.on().createController('CrudModel', function (data) {
+        actualData = data;
+      });
+      Sauron.createController('CrudModel', data);
+      assert(data === actualData);
+    },
     'has a create method for models that': worksProperly.model('create'),
     'has a retrieve method for models that': worksProperly.model('retrieve'),
     'has a update method for models that': worksProperly.model('update'),

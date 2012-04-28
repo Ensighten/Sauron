@@ -306,14 +306,10 @@ define(function () {
       this.make();
       this.controller(controller);
 
-      if (arguments.length > 0) {
-        var args = [].slice.call(arguments),
-            method = this.method || 'voice';
-        return this[method].apply(this, args);
-      } else {
-      // Otherwise, return a clone
-        return this.clone();
-      }
+      var args = [].slice.call(arguments, 1),
+          method = this.method || 'voice';
+      args.unshift(null);
+      return this[method].apply(this, args);
     },
     'start': execFn('start'),
     'stop': execFn('stop'),
@@ -339,14 +335,10 @@ define(function () {
       this.make();
       this.model(model);
 
-      if (arguments.length > 0) {
-        var args = [].slice.call(arguments),
-            method = this.method || 'voice';
-        return this[method].apply(this, args);
-      } else {
-      // Otherwise, return a clone
-        return this.clone();
-      }
+      var args = [].slice.call(arguments, 1),
+          method = this.method || 'voice';
+      args.unshift(null);
+      return this[method].apply(this, args);
     },
     'create': execFn('create'),
     'retrieve': execFn('retrieve'),
