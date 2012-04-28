@@ -114,10 +114,20 @@ function worksProperly(mvcType, methodName) {
     'works properly': function () {
       var data = {'a': 'b'},
           actualData;
-      Sauron.controller('test').on()[methodName](function (data) {
+      Sauron[mvcType]('test').on()[methodName](function (data) {
         actualData = data;
       });
-      Sauron.controller('test')[methodName](data);
+      Sauron[mvcType]('test')[methodName](data);
+      assert(data === actualData);
+    },
+    'works properly2': function () {
+      var data = {'a': 'b'},
+          actualData;
+
+      Sauron[mvcType]('test2').on()[methodName](function (data) {
+        actualData = data;
+      });
+      Sauron[methodName]()[mvcType]('test2', data);
       assert(data === actualData);
     }
   };
@@ -136,17 +146,20 @@ suite.addBatch({
   }
 });
 
+// Model sugar
 worksProperly.model = function (methodName) {
   return worksProperly('model', methodName);
 };
-
-// Model sugar
 suite.addBatch({
   'Sauron': {
     'has a create method for models that': worksProperly.model('create'),
     'has a retrieve method for models that': worksProperly.model('retrieve'),
     'has a update method for models that': worksProperly.model('update'),
-    'has a delete method for models that': worksProperly.model('delete')
+    'has a delete method for models that': worksProperly.model('delete'),
+    'has a createEvent method for models that': worksProperly.model('createEvent'),
+    'has a retrieveEvent method for models that': worksProperly.model('retrieveEvent'),
+    'has a updateEvent method for models that': worksProperly.model('updateEvent'),
+    'has a deleteEvent method for models that': worksProperly.model('deleteEvent')
   }
 });
 
@@ -166,5 +179,8 @@ suite.addBatch({
 });
 
 suite.exportTo('Mocha');
-mocha.run();
+
+var runner = mocha.run();
+// Mocha patches
+runner.globals(['stylesheetHostAndProtocol', 'isNotSameHostandProtocol']);
 });
