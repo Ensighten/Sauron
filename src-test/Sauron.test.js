@@ -136,8 +136,6 @@ worksProperly.controller = function (methodName) {
   return worksProperly('controller', methodName);
 };
 
-// TODO: Test createController, createModel as well as new-paradigm of .make
-
 // Controller sugar
 suite.addBatch({
   'Sauron': {
@@ -148,6 +146,15 @@ suite.addBatch({
         actualData = data;
       });
       Sauron.createController('HtmlController', data);
+      assert(data === actualData);
+    },
+    'has a method for making controllers (better grammar than create)': function () {
+      var data = {'a': 'b'},
+          actualData;
+      Sauron.on().controller('HtmlController').make(function (data) {
+        actualData = data;
+      });
+      Sauron.make().controller('HtmlController', data);
       assert(data === actualData);
     },
     'has a start method for models that': worksProperly.controller('start'),
@@ -168,6 +175,15 @@ suite.addBatch({
         actualData = data;
       });
       Sauron.createController('CrudModel', data);
+      assert(data === actualData);
+    },
+    'has a method for making models (better grammar than create)': function () {
+      var data = {'a': 'b'},
+          actualData;
+      Sauron.on().model('CrudModel').make(function (data) {
+        actualData = data;
+      });
+      Sauron.make().model('CrudModel', data);
       assert(data === actualData);
     },
     'has a create method for models that': worksProperly.model('create'),

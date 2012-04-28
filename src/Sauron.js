@@ -279,10 +279,32 @@ define(function () {
     'make': function () {
       this.log('PREFIX UPDATED TO: make');
       this._prefix = 'make';
+
+      // If there are arguments, perform the normal action
+      if (arguments.length > 0) {
+        var args = [].slice.call(arguments),
+            method = this.method || 'voice';
+
+        return this[method].apply(this, args);
+      } else {
+      // Otherwise, return a clone
+        return this.clone();
+      }
     },
     'destroy': function () {
       this.log('PREFIX UPDATED TO: destroy');
       this._prefix = 'destroy';
+
+      // If there are arguments, perform the normal action
+      if (arguments.length > 0) {
+        var args = [].slice.call(arguments),
+            method = this.method || 'voice';
+
+        return this[method].apply(this, args);
+      } else {
+      // Otherwise, return a clone
+        return this.clone();
+      }
     },
 
     // Controller methods
