@@ -21,6 +21,9 @@ define(function () {
   function Palantir() {
     this.stack = [];
   }
+  function popStack() {
+    return this.stack.pop();
+  }
   var PalantirProto = Palantir.prototype = {
     /**
      * Retrieval function for the current channel
@@ -53,35 +56,19 @@ define(function () {
       return channel;
     },
     /**
-     * Adds a new channel to the stack of channels
-     * @param {String} channel Channel to add to the stack
-     * @returns {this}
+     * Maintenance functions for the stack of channels
+     * @returns {String}
      */
     'pushStack': function (channel) {
       this.stack.push(channel);
       return this;
     },
-    /**
-     * Removes and returns the last channel on the stack
-     * @returns {String|undefined}
-     */
-    'popStack':
-      return this.stack.pop();
-    },
-    /**
-     * Removes and the last channel on the stack
-     * @returns {this.clone}
-     */
+    'popStack': popStack,
     'end': function () {
       var that = this.clone();
-      that.popStack();
+      popStack.call(that);
       return that;
     },
-    /**
-     * Adds a new subchannel to the current channel
-     * @param {String}
-     * @returns {this.clone}
-     */
     'of': function (subchannel) {
       var that = this.clone(),
           lastChannel = that.channel(true),
@@ -97,7 +84,7 @@ define(function () {
      * Subscribing function for event listeners
      * @param {String} [subchannel] Subchannel to listen to
      * @param {Function} [fn] Function to subscribe with
-     * @returns {Sauron|this.clone}
+     * @returns {this.clone}
      */
     'on': function (subchannel, fn) {
       var that = this.clone();
@@ -154,7 +141,7 @@ define(function () {
      * Unsubscribing function for event listeners
      * @param {String} [subchannel] Subchannel to unsubscribe from to
      * @param {Function} [fn] Function to remove subscription on
-     * @returns {Sauron|this.clone}
+     * @returns {this.clone}
      */
     'off': function (subchannel, fn) {
       var that = this.clone();
@@ -226,7 +213,7 @@ define(function () {
           i = 0,
           len = channel.length;
 
-      that.log('EXECUTING FUNCTIONS IN: ', channelName, '(' + len + ' subscribers)');
+      that.log('EXECUTING FUNCTIONS IN: ', channelName);
 
       // Loop through the subscribers
       for (; i < len; i++) {
@@ -354,6 +341,17 @@ define(function () {
       // this.log('CONTROLLER UPDATED TO:', controller);
       that.log('CHANNEL UPDATED TO:', that.channel());
 
+      // If require is present
+      if (require) {
+        var controllerUrl = require.getContext().config.paths._controllerDir || '',
+            url = controllerUrl + controller;
+
+        // If the controller has not yet been loaded by requirejs, notify
+        if (!require.has(url)) {
+          console.log(controller + ' has not been loaded by requirejs');
+        }
+      }
+
       if (arguments.length > 1) {
         var args = [].slice.call(arguments, 1),
             method = that.method || 'voice';
@@ -386,6 +384,17 @@ define(function () {
 
       // this.log('MODEL UPDATED TO:', model);
       that.log('CHANNEL UPDATED TO:', that.channel());
+
+      // If require is present
+      if (require) {
+        var modelUrl = require.getContext().config.paths._modelDir || '',
+            url = modelUrl + model;
+console.log(url, require.has(url));
+        // If the controller has not yet been loaded by requirejs, notify
+        if (!require.has(url)) {
+          console.log(model + ' has not been loaded by requirejs');
+        }
+      }
 
       if (arguments.length > 1) {
         var args = [].slice.call(arguments, 1),
