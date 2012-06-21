@@ -208,6 +208,7 @@ define(function () {
 
         // Call the function within its original context
         subscriber.apply(subscriber.SAURON_CONTEXT, args);
+        // Bug here
       }
 
       // This is a terminal event so return Sauron
@@ -390,7 +391,7 @@ define(function () {
         console.log.apply(console, arguments);
       }
       return this;
-    },
+    }
   };
 
   function execFn(subchannel) {
@@ -421,6 +422,7 @@ define(function () {
         Sauron[key] = function () {
           var args = [].slice.call(arguments);
           return fn.apply(new Palantir(), args);
+          // Bug here
         };
       }(PalantirProto[key]));
     }
