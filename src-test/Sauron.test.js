@@ -1,5 +1,5 @@
 require(['../src/Sauron'], function (Sauron) {
-var suite = new Skeleton('Mason.js');
+var suite = new Skeleton('Sauron.js');
 
 // Super basics
 suite.addBatch({
@@ -230,7 +230,10 @@ suite.addBatch({
       Sauron.once('onceTest', function () {
         count += 1;
       });
+
       Sauron.voice('onceTest');
+      assert(count === 1);
+
       Sauron.voice('onceTest');
       assert(count === 1);
     },
@@ -259,23 +262,31 @@ suite.addBatch({
       assert(notCalled);
     },
     'can fire multiple once events': function () {
-      var count = 0;
+      var countOne = 0,
+          countTwo = 0;
       Sauron.once('multiOnceTest', function () {
-        count += 1;
+        countOne += 1;
       });
+
       Sauron.voice('multiOnceTest');
+      assert(countOne === 1);
+
       Sauron.voice('multiOnceTest');
-      assert(count === 1);
+      assert(countOne === 1);
+
       Sauron.once('multiOnceTest', function () {
-        count += 1;
+        countTwo += 1;
       });
+
       Sauron.voice('multiOnceTest');
+      assert(countTwo === 2);
+
       Sauron.voice('multiOnceTest');
-      assert(count === 2);
+      assert(countTwo === 2);
     },
     'can fire concurrent once events': function () {
       var countOne = 0,
-        countTwo = 0;
+          countTwo = 0;
 
       Sauron.once('concOnceTest', function () {
         countOne += 1;
@@ -283,7 +294,11 @@ suite.addBatch({
       Sauron.once('concOnceTest', function () {
         countTwo += 1;
       });
+
       Sauron.voice('concOnceTest');
+      assert(countOne === 1);
+      assert(countTwo === 1);
+
       Sauron.voice('concOnceTest');
       assert(countOne === 1);
       assert(countTwo === 1);
