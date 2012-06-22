@@ -220,10 +220,8 @@ define(function () {
       for (; i < len; i++) {
         subscriber = channel[i];
 
-        if(!!subscriber) {
-          // Call the function within its original context
-          subscriber.apply(subscriber.SAURON_CONTEXT, args);
-        }
+        // Call the function within its original context
+        subscriber.apply(subscriber.SAURON_CONTEXT, args);
       }
 
       // This is a terminal event so return Sauron
