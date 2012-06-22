@@ -279,10 +279,10 @@ suite.addBatch({
       });
 
       Sauron.voice('multiOnceTest');
-      assert(countTwo === 2);
+      assert(countTwo === 1);
 
       Sauron.voice('multiOnceTest');
-      assert(countTwo === 2);
+      assert(countTwo === 1);
     },
     'can fire concurrent once events': function () {
       var countOne = 0,

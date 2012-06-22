@@ -208,7 +208,8 @@ define(function () {
       // Collect the data and channel
       var args = [].slice.call(arguments, 1),
           channelName = that.channel(),
-          channel = MiddleEarth[channelName] || [],
+      // Capture the subscribers in case of self-removal (e.g. once)
+          channel = (MiddleEarth[channelName] || []).slice(),
           subscriber,
           i = 0,
           len = channel.length;
@@ -391,7 +392,7 @@ define(function () {
       if (require) {
         var modelUrl = require.getContext().config.paths._modelDir || '',
             url = modelUrl + model;
-console.log(url, require.has(url));
+
         // If the controller has not yet been loaded by requirejs, notify
         if (!require.has(url)) {
           console.log(model + ' has not been loaded by requirejs');
