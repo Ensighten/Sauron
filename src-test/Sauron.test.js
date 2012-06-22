@@ -257,6 +257,36 @@ suite.addBatch({
       });
       Sauron.createController('controllerB', 'woot');
       assert(notCalled);
+    },
+    'can fire multiple once events': function () {
+      var count = 0;
+      Sauron.once('multiOnceTest', function () {
+        count += 1;
+      });
+      Sauron.voice('multiOnceTest');
+      Sauron.voice('multiOnceTest');
+      assert(count === 1);
+      Sauron.once('multiOnceTest', function () {
+        count += 1;
+      });
+      Sauron.voice('multiOnceTest');
+      Sauron.voice('multiOnceTest');
+      assert(count === 2);
+    },
+    'can fire concurrent once events': function () {
+      var countOne = 0,
+        countTwo = 0;
+
+      Sauron.once('concOnceTest', function () {
+        countOne += 1;
+      });
+      Sauron.once('concOnceTest', function () {
+        countTwo += 1;
+      });
+      Sauron.voice('concOnceTest');
+      Sauron.voice('concOnceTest');
+      assert(countOne === 1);
+      assert(countTwo === 1);
     }
   }
 });
