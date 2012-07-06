@@ -167,10 +167,10 @@ define(function () {
         }
 
         // If there is a function
+        var channelName = that.channel();
         if (fn) {
           // Get the proper channel
-          var channelName = that.channel(),
-              channel = MiddleEarth[channelName] || [],
+          var channel = MiddleEarth[channelName] || [],
               i = channel.length;
 
           that.log('REMOVING FUNCTION FROM: ', channelName);
@@ -185,6 +185,9 @@ define(function () {
 
           // This is a terminal event so return Sauron
           return Sauron;
+        } else {
+        // Otherwise, unbind all items from the channel
+          MiddleEarth[channelName] = [];
         }
       }
 
