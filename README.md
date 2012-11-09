@@ -12,7 +12,11 @@ Testing
 -------
 The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a Skeleton wrapper -- one of twolfson's unfinished side projects) for in-browser testing. Start up the server and navigate to [http://localhost:8080/](http://localhost:8080/) and the test will begin.
 ```js
+# Load up server
 node app.js
+
+# Navigate to the test page
+{{browser}} http://localhost:8080/
 ```
 
 Sample Code
