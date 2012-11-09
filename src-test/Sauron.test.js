@@ -306,6 +306,7 @@ suite.addBatch({
     'will a controller stop without any data': function () {
       var countOne = 0;
 
+Sauron._debug = true;
       Sauron.on().controller('stopTest').stop(function () {
         countOne += 1;
       });
