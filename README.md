@@ -8,6 +8,13 @@ Sauron was designed as a core component of the Ensighten client-side framework.
 
 (This is a TODO) It is specialized to restart models and controllers in case a fault occurs (Attribution to Addy Osmani for this idea). This is acheived through an loose channel system for talking between models and controllers.
 
+Testing
+-------
+The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a Skeleton wrapper -- one of twolfson's unfinished side projects) for in-browser testing. Start up the server and navigate to [http://localhost:8080/](http://localhost:8080/) and the test will begin.
+```js
+node app.js
+```
+
 Sample Code
 -----------
 Note: Always be sure to require your controller/model before called .start, .stop, or whatever your method is
