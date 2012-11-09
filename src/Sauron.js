@@ -477,7 +477,7 @@ define(function () {
       that = that.of(subchannel);
 
       // If there are arguments, perform the normal action
-      // if (arguments.length > 0) {
+      if (arguments.length > 0) {
         var args = [].slice.call(arguments),
             method = that.method || 'voice';
 
@@ -485,10 +485,10 @@ define(function () {
         args.unshift(null);
 
         return that[method].apply(that, args);
-      // } else {
-      // // Otherwise, return a clone
-        // return that;
-      // }
+      } else {
+      // Otherwise, return a clone
+        return that;
+      }
     };
   }
 

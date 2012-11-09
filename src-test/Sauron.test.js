@@ -302,17 +302,16 @@ suite.addBatch({
       Sauron.voice('concOnceTest');
       assert(countOne === 1);
       assert(countTwo === 1);
-    },
-    'will a controller stop without any data': function () {
-      var countOne = 0;
+    // },
+    // 'will a controller stop without any data': function () {
+      // var countOne = 0;
 
-Sauron._debug = true;
-      Sauron.on().controller('stopTest').stop(function () {
-        countOne += 1;
-      });
+      // Sauron.on().controller('stopTest').stop(function () {
+        // countOne += 1;
+      // });
 
-      Sauron.controller('stopTest').stop();
-      assert(countOne === 1);
+      // Sauron.controller('stopTest').stop();
+      // assert(countOne === 1);
     }
   }
 });
