@@ -29,6 +29,19 @@ suite.addBatch({
       Sauron.off('basicOff', basicOff);
       Sauron.voice('basicOff');
       assert(count === 1);
+    },
+    'can unsubscribe functions from events (via callback)': function () {
+      var count = 0,
+        callback;
+      function basicOff() {
+        count += 1;
+      }
+
+      callback = Sauron.on('basicOff', basicOff);
+      Sauron.voice('basicOff');
+      callback.off();
+      Sauron.voice('basicOff');
+      assert(count === 1);
     }
   }
 });
@@ -88,6 +101,23 @@ suite.addBatch({
 
         Sauron.voice('multiEvent2');
         Sauron.off('multiEvent2', fn2);
+        Sauron.voice('multiEvent2');
+        assert(count1 === 2);
+        assert(count2 === 1);
+        assert(count3 === 2);
+      },
+      'can unsubscribe the proper one (via callback)': function () {
+        var count1 = 0,
+            count2 = 0,
+            count3 = 0,
+            handler2;
+
+        Sauron.on('multiEvent2', function () { count1 += 1; });
+        handler2 = Sauron.on('multiEvent2', function () { count2 +=1; });
+        Sauron.on('multiEvent2', function () { count3 += 1; });
+
+        Sauron.voice('multiEvent2');
+        handler2.off();
         Sauron.voice('multiEvent2');
         assert(count1 === 2);
         assert(count2 === 1);

@@ -129,8 +129,10 @@ define(function () {
           // Add the function to the channel
           channel.push(fn);
 
+          /* let the clone be returned so callers can easily unsubscribe their events
           // This is a terminal event so return Sauron
           return Sauron;
+          */
         }
       }
 
