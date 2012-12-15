@@ -254,7 +254,7 @@ define(function () {
       return retObj;
     },
     /**
-     * Suguar subscribe function that listens to an event exactly once
+     * Sugar subscribe function that listens to an event exactly once
      * @param {String} [subchannel] Subchannel to listen to
      * @param {Function} [fn] Function to subscribe with
      * @returns {this.clone}
@@ -289,7 +289,7 @@ define(function () {
         };
 
         // Call .on and return
-        return that.on(subchannel, subFn);;
+        return that.on(subchannel, subFn);
       }
 
       // Return a clone
@@ -495,7 +495,7 @@ define(function () {
   }
 
   // Copy over all of the items in the Palantir prototype to Sauron such that each one is run on a fresh Palantir
-  for (key in PalantirProto) {
+  for (var key in PalantirProto) {
     if (PalantirProto.hasOwnProperty(key)) {
       (function (fn) {
         Sauron[key] = function () {
