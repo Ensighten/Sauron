@@ -17,6 +17,15 @@
 
     <script src="Skeleton.js"></script>
     <script src="require.js"></script>
+    <script>
+      // Configure requirejs to load from dist
+      require.config({
+        'baseUrl': '../dist',
+        'paths': {
+          'Sauron': 'Sauron.require'
+        }
+      });
+    </script>
     <script src="Sauron.test.js"></script>
 
     <!-- <script>

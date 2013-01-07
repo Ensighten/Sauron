@@ -1,4 +1,4 @@
-require(['../src/Sauron'], function (Sauron) {
+require(['Sauron'], function (Sauron) {
 var suite = new Skeleton('Sauron.js');
 
 // Super basics

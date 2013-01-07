@@ -16,7 +16,7 @@
   var PalantirProto = Palantir.prototype = {
     /**
      * Retrieval function for the current channel
-     * @param {Boolean} raw If true, prefixing will be skipped
+     * @param {Boolean} [raw] If true, prefixing will be skipped
      * @returns {String}
      */
     'channel': function (raw) {
@@ -58,6 +58,11 @@
       popStack.call(that);
       return that;
     },
+    /**
+     * Adds a new subchannel to the current channel
+     * @param {String} subchannel
+     * @returns {this.clone}
+     */
     'of': function (subchannel) {
       var that = this.clone(),
           lastChannel = that.channel(true),
@@ -357,6 +362,11 @@
         return that;
       }
     },
+    /**
+     * Method for creating controllers
+     * @param {String} controller Controller to use name for
+     * This will ALWAYS call the (on, off, once, voice) function.
+     */
     'createController': function (controller) {
       var that = this.clone();
 

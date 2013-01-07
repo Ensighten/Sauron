@@ -4,131 +4,196 @@ Mediator pattern for Ensighten's client-side MVC framework
 
 Synopsis
 --------
-Sauron was designed as a core component of the Ensighten client-side framework.
+Sauron was designed as a core component of the Ensighten client-side framework; providing a loose channel system for talking between models and controllers.
 
-(This is a TODO) It is specialized to restart models and controllers in case a fault occurs (Attribution to Addy Osmani for this idea). This is acheived through an loose channel system for talking between models and controllers.
+Getting Started
+---------------
+Download the [production version][min] ([vanilla][min] or [requirejs][min_require]) or the [development version][max] ([vanilla][max] or [requirejs][max_require]).
 
-Testing
--------
-The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a Skeleton wrapper -- one of twolfson's unfinished side projects) for in-browser testing. Start up the server and navigate to [http://localhost:8080/](http://localhost:8080/) and the test will begin.
+[min]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.min.js
+[max]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.js
+[min]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.min.js
+[max]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.js
+
+In your web page:
+
+```html
+<script src="jquery.js"></script>
+<script src="dist/Sauron.min.js"></script>
+<script>
+// Start the main controller on the home page
+Sauron.start().controller('main', {'page': 'home'});
+</script>
+```
+
+Documentation
+-------------
+Sauron can talk in the `controller`, `model`, or no namespace.
+
+Within all namespaces, we can modify events to be subscriptions, `on`, unsubscriptions, `off`, or emissions/triggers, `voice`. By default, if a namespace has a terminating method called (e.g. `start` for `controller`) and there is no modifier, `voice` will be called.
+
+Terminating methods for the `controller` namespace are `start` and `stop`.
 ```js
-# Load up server
-node app.js
-
-# Navigate to the test page
-{{browser}} http://localhost:8080/
+Sauron.start().controller('home', {'some': 'data'});
 ```
 
-Sample Code
------------
-Note: Always be sure to require your controller/model before called .start, .stop, or whatever your method is
-
-```
-Sauron.start().controller('main', {'main': 'home'}, function () {
-  // Do something
+Terminating methods for the `model` namespace are `create`, `retrieve`, `update`, `delete`, `createEvent`, `updateEvent`, and `deleteEvent`.
+```js
+Sauron.model('app').retrieve({'id': 1}, function (err, app) {
+  // Inspect app
 });
+```
 
+Examples
+--------
+### Listening for an event
+```js
 Sauron.on().controller('home').start(function () {
-  // Do something
-});
-
-Sauron.model('user').retrieve({'name': 'Ensighten'}, function (Ensighten) {
-  // Do something
+  console.log('A home controller has been started');
 });
 ```
 
-API (Quick and Dirty copy from src/Sauron.js)
----------------------------------------------
-**Sauron.channel** - Retrieval function for the current channel
+### Triggering an event
+```js
+Sauron.model('user').create({'name': 'John Doe'});
+```
 
- * @param {Boolean} raw If true, prefixing will be skipped
+### Unsubscribing from an event internally
+Sauron.on().model('page').createEvent(function () {
+  console.log('New page created');
+  this.off();
+});
+
+### Unsubscribing from an event externally
+var subFn = function () {
+  console.log('Stop was called');
+};
+Sauron.on().controller('about').stop(subFn);
+Sauron.off().controller('about').stop(subFn);
+
+
+API
+---
+```js
+Sauron.channel([raw]);
+/**
+ * Retrieval function for the current channel
+ * @param {Boolean} [raw] If true, prefixing will be skipped
  * @returns {String}
+ */
 
-
-**Sauron.of** - Adds a new subchannel to the current channel
-
- * @param {String}
+Sauron.of(subchannel);
+/**
+ * Adds a new subchannel to the current channel
+ * @param {String} subchannel
  * @returns {this.clone}
+ */
 
-
-**Sauron.on** - Subscribing function for event listeners
-
+Sauron.on([subchannel], [fn]);
+/**
+ * Subscribing function for event listeners
  * @param {String} [subchannel] Subchannel to listen to
  * @param {Function} [fn] Function to subscribe with
- * @returns {Sauron|this.clone}
+ * @returns {this.clone}
+ */
 
-
-**Sauron.off** - Unsubscribing function for event listeners
-
+Sauron.off([subchannel], [fn]);
+/**
+ * Unsubscribing function for event listeners
  * @param {String} [subchannel] Subchannel to unsubscribe from to
  * @param {Function} [fn] Function to remove subscription on
- * @returns {Sauron|this.clone}
-
-
-**Sauron.clone** - Returns a cloned copy of this
-
  * @returns {this.clone}
+ */
 
-
-**Sauron.voice** - Voice/emit command for Sauron
-
+Sauron.voice(subchannel, [param1], [param2], ...);
+/**
+ * Voice/emit command for Sauron
  * @param {String|null} subchannel Subchannel to call on. If it is falsy, it will be skipped
  * @param {Mixed} [param] Parameter to voice to the channel. There can be infinite of these
  * @returns {Sauron}
+ */
 
+Sauron.clone();
+/**
+ * Returns a cloned copy of this
+ * @returns {this.clone}
+ */
 
-**Sauron.once** - Suguar subscribe function that listens to an event exactly once
-
+Sauron.once([subchannel], [fn]);
+/**
+ * Sugar subscribe function that listens to an event exactly once
  * @param {String} [subchannel] Subchannel to listen to
  * @param {Function} [fn] Function to subscribe with
  * @returns {this.clone}
+ */
 
-
-**Sauron.noError** - Helper function for error first callbacks. If an error occurs, we will log it and not call the function.
-
+Sauron.noError(fn);
+/**
+ * Helper function for error first callbacks. If an error occurs, we will log it and not call the function.
  * @param {Function} fn Function to remove error for
- * @returns {Function} Function that ignores the first parameter for all calls on fn
+ * @returns {Function}
+ */
 
+// CONTROLLER METHODS
 
-**<u>ALL METHODS AFTER THIS POINT HAVE THE SAME RESPONSE STRUCTURE</u>**
+Sauron.controller(controller);
+/**
+ * Fluent method for calling out a controller
+ * @param {String} controller Name of the controller to invoke
+ * @param {Mixed} * If there are any arguments, they will be passed to (on, off, once, voice) for invocation
+ * @returns {Mixed} If there are more arguments than controller, the (on, off, once, voice) response will be returned. Otherwise, this.clone
+ */
 
- * @param {Mixed} \* If there are any arguments (outside of those above), they will be passed to (on, off, once, voice) for invocation
- * @returns {Mixed} If there are more arguments other than those above, the (on, off, once, voice) response will be returned. Otherwise, this.clone
-
-
-**Sauron.controller** - Method for specifying a controller to use
-
+Sauron.createController(controller);
+/**
+ * Method for creating controllers
  * @param {String} controller Controller to use name for
- * See ALL METHODS snippet.
+ * This will ALWAYS call the (on, off, once, voice) function.
+ */
 
+Sauron.start([param1], [param2], ...);
+Sauron.stop([param1], [param2], ...);
+/**
+ * Methods for starting/stopping controllers. Will call previous action if there was any (e.g. on, off, once).
+ */
 
-**Sauron.createController** - Method for create controllers
+// MODEL METHODS
 
- * @param {String} controller Controller to use name for
- * See ALL METHODS snippet. This will ALWAYS call the (on, off, once, voice) function.
+Sauron.model(model);
+// Same as Sauron.controller except for models
 
+Sauron.createModel(model);
+// Same as Sauron.createController except for models
 
-**Sauron.(start|stop)** - Methods for starting/stopping controllers
+Sauron.(create|retrieve|update|delete)(Event)?([param1], [param2], ...);
+// Same as Sauron.start except for models
+// Names expand to create, createEvent, retrieve, ..., deleteEvent
+```
 
- * See ALL METHODS snippet.
+Contributing
+------------
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint your code using [grunt](http://gruntjs.com/) and test via the [instructions below](#testing).
 
+_Also, please don't edit files in the "dist" or "stage" subdirectories as they are generated via grunt. You'll find source code in the "lib" subdirectory!_
 
-**Sauron.model** - See Sauron.controller, replace controller with model
+Testing
+-------
+The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a [crossbones][crossbones] wrapper) for in-browser testing. Start up the server and navigate to the [test page][testPage] and the test will begin.
+```js
+# If you do not have serve installed, install it
+sudo npm install -g serve
 
-**Sauron.createModel** - See Sauron.createMode, replace controller with model
+# Begin hosting a server
+serve
 
-**Sauron.(create|retrieve|update|delete)(Event)?** - Methods for running CRUD with models
+# Navigate to the test page
+{{browser}} http://localhost:3000/src-test/Sauron.test.html
+```
 
- * That is Sauron.create, Sauron.retrieve, Sauron.update, Sauron.delete, Sauron.creatEvent, Sauron.retrieveEvent, Sauron.updateEvent, Sauron.deleteEvent
- * See ALL METHODS snippet.
+[crossbones]: https://github.com/Ensighten/crossbones
+[testPage]: http://localhost:3000/src-test/Sauron.test.html
 
-Pipe Dream Grammar - not yet implemented (and probably will never be due to maintenance and length)
-------------------
-
- * Sauron.create.an.app => Sauron.create().an('app')
- * Sauron.when.an.app.is.created/isCreated => Sauron.when().an('app').is().created()
- * Sauron.an.app.has.been.created => Sauron.an('app').has().been().created()
- * Sauron.start.main
- * Sauron.stop.login
- * Sauron.ignore.when.an.app.is.created => Sauron.ignore(fn).when().an.app.is.created() -- note, a false positive is possible if when('') is used x_x
- * Sauron.the.next.time.an.app.is.created => Sauron.the().next().time().an().app().is().created()
+License
+-------
+Copyright (c) 2013 Ensighten
+Licensed under the MIT license.
