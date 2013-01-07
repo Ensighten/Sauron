@@ -1,18 +1,41 @@
 {
-  "author": "Todd Wolfson <todd.wolfson@ensighten.com> (http://twolfson.com/)",
   "name": "Sauron",
   "description": "Mediator pattern for Ensighten's client-side MVC framework",
   "version": "1.1.0",
   "homepage": "https://github.com/Ensighten/Sauron",
+  "author": {
+    "name": "Todd Wolfson",
+    "email": "todd@twolfson.com",
+    "url": "http://twolfson.com/"
+  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Ensighten/Sauron.git"
+    "url": "git://github.com/Ensighten/Sauron.git"
   },
+  "bugs": {
+    "url": "https://github.com/Ensighten/Sauron/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Ensighten/Sauron/blob/master/LICENSE-MIT"
+    }
+  ],
   "main": "src/Sauron.js",
-  "engines": {
-    "node": "*"
+  "scripts": {
+    "test": "grunt qunit"
   },
   "dependencies": {},
-  "devDependencies": {},
-  "optionalDependencies": {}
+  "devDependencies": {
+    "grunt": "~0.3.17",
+    "grunt-templater": "0.0.3-1",
+    "mustache": "~0.7.0"
+  },
+  "keywords": [
+    "mediator",
+    "mvc",
+    "halo",
+    "emit",
+    "client-side"
+  ]
 }
