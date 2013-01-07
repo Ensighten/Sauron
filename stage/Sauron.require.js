@@ -1,4 +1,5 @@
-(function () {
+define(function () {
+return (function () {
   var MiddleEarth = {},
       Sauron = {},
       console = window.console || {'log': function () {}};
@@ -497,3 +498,4 @@
 
   return Sauron;
 }());
+});

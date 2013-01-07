@@ -1,4 +1,4 @@
-(function () {
+window.Sauron = (function () {
   var MiddleEarth = {},
       Sauron = {},
       console = window.console || {'log': function () {}};

@@ -48,14 +48,16 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.require.min.js'
       }
     },
-    qunit: {
-      files: ['test/**/*.html']
-    },
+    // qunit: {
+    //   files: ['test/**/*.html']
+    // },
     lint: {
-      files: ['grunt.js', 'src/**/*.js', 'test/**/*.js']
+      // files: ['grunt.js', 'src/**/*.js', 'test/**/*.js']
+      files: ['grunt.js', 'src/**/*.js']
     },
     watch: {
-      files: ['<config:lint.files>', '<config:qunit.files>'],
+      // files: ['<config:lint.files>', '<config:qunit.files>'],
+      files: ['<config:lint.files>'],
       tasks: 'default'
     },
     jshint: {
@@ -63,7 +65,7 @@ module.exports = function(grunt) {
         curly: true,
         eqeqeq: true,
         immed: true,
-        latedef: true,
+        // latedef: true,
         // newcap: true,
         noarg: true,
         sub: true,
@@ -71,7 +73,8 @@ module.exports = function(grunt) {
         boss: true,
         eqnull: true,
 
-        browser: true
+        browser: true,
+        loopfunc: true
       },
       globals: {
         '$': true,
@@ -86,10 +89,11 @@ module.exports = function(grunt) {
   // Load in grunt-templater
   grunt.loadNpmTasks('grunt-templater');
 
-  // Alias test as qunit
-  grunt.registerTask('test', 'qunit');
+  // // Alias test as qunit
+  // grunt.registerTask('test', 'qunit');
 
   // Default task.
-  grunt.registerTask('default', 'lint template concat min test');
+  // grunt.registerTask('default', 'lint template concat min test');
+  grunt.registerTask('default', 'lint template concat min');
 
 };

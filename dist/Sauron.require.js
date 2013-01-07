@@ -1,4 +1,9 @@
-(function () {
+/*! Sauron - v1.1.0 - 2013-01-07
+* https://github.com/Ensighten/Sauron
+* Copyright (c) 2013 Ensighten; Licensed MIT */
+
+define(function () {
+return (function () {
   var MiddleEarth = {},
       Sauron = {},
       console = window.console || {'log': function () {}};
@@ -497,3 +502,4 @@
 
   return Sauron;
 }());
+});
