@@ -59,18 +59,21 @@ Sauron.model('user').create({'name': 'John Doe'});
 ```
 
 ### Unsubscribing from an event internally
+```js
 Sauron.on().model('page').createEvent(function () {
   console.log('New page created');
   this.off();
 });
+```
 
 ### Unsubscribing from an event externally
+```js
 var subFn = function () {
   console.log('Stop was called');
 };
 Sauron.on().controller('about').stop(subFn);
 Sauron.off().controller('about').stop(subFn);
-
+```
 
 API
 ---
@@ -178,7 +181,7 @@ _Also, please don't edit files in the "dist" or "stage" subdirectories as they a
 
 Testing
 -------
-The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a [crossbones][crossbones] wrapper) for in-browser testing. Start up the server and navigate to the [test page][testPage] and the test will begin.
+The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a [crossbones][crossbones] wrapper) for in-browser testing. Start up the server, navigate to the [test page][testPage], and the test will begin.
 ```js
 # If you do not have serve installed, install it
 sudo npm install -g serve
