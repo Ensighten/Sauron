@@ -10,8 +10,8 @@ Getting Started
 ---------------
 Download the [production version][min] ([vanilla][min] or [requirejs][min_require]) or the [development version][max] ([vanilla][max] or [requirejs][max_require]).
 
-[min]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.min.js
-[max]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.js
+[min_require]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.min.js
+[max_require]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.js
 [min]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.min.js
 [max]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.js
 
