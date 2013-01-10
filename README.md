@@ -1,10 +1,12 @@
 Sauron
 ======
-Mediator pattern for Ensighten's client-side MVC framework
+Mediator pattern for [Halo][halo], a client-side MVC framework.
 
 Synopsis
 --------
-Sauron was designed as a core component of the Ensighten client-side framework; providing a loose channel system for talking between models and controllers.
+Sauron was designed as a core component of [Halo][halo]; providing a loose channel system for talking between models and controllers.
+
+[halo]: https://github.com/Ensighten/halo
 
 Getting Started
 ---------------
