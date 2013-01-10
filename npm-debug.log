@@ -1,0 +1,143 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.1.41
+3 info using node@v0.8.8
+4 verbose config file /home/todd/.npmrc
+5 verbose config file /usr/local/etc/npmrc
+6 verbose config file /usr/local/lib/node_modules/npm/npmrc
+7 verbose publish [ '.' ]
+8 verbose read json /home/todd/github/Sauron/package.json
+9 verbose cache add [ '.', null ]
+10 silly cache add name=undefined spec="." args=[".",null]
+11 verbose parsed url { pathname: '.', path: '.', href: '.' }
+12 silly lockFile 3a52ce78- .
+13 verbose lock . /home/todd/.npm/3a52ce78-.lock
+14 verbose read json package.json
+15 verbose tar pack [ '/home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/tmp.tgz',
+15 verbose tar pack   '.' ]
+16 verbose tarball /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/tmp.tgz
+17 verbose folder .
+18 info prepublish Sauron@1.1.0
+19 silly lockFile 20b7a218-664-0-009494624100625515-tmp-tgz /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/tmp.tgz
+20 verbose lock /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/tmp.tgz /home/todd/.npm/20b7a218-664-0-009494624100625515-tmp-tgz.lock
+21 silly lockFile 20b7a218-664-0-009494624100625515-tmp-tgz /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/tmp.tgz
+22 verbose tar unpack /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/tmp.tgz
+23 silly lockFile 9a56ba29-664-0-009494624100625515-package /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package
+24 verbose lock /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package /home/todd/.npm/9a56ba29-664-0-009494624100625515-package.lock
+25 silly gunzTarPerm modes [ '755', '644' ]
+26 silly gunzTarPerm extractEntry package.json
+27 silly gunzTarPerm extractEntry .npmignore
+28 silly gunzTarPerm extractEntry README.md
+29 silly gunzTarPerm extractEntry grunt.js
+30 silly gunzTarPerm extractEntry src/Sauron.js
+31 silly gunzTarPerm extractEntry src/templates/vanilla.mustache
+32 silly gunzTarPerm extractEntry src/templates/require.mustache
+33 silly gunzTarPerm extractEntry dist/Sauron.require.js
+34 silly gunzTarPerm extractEntry dist/Sauron.js
+35 silly gunzTarPerm extractEntry dist/Sauron.require.min.js
+36 silly gunzTarPerm extractEntry dist/Sauron.min.js
+37 silly gunzTarPerm extractEntry stage/Sauron.require.js
+38 silly gunzTarPerm extractEntry stage/Sauron.js
+39 silly gunzTarPerm extractEntry src-test/Skeleton.js
+40 silly gunzTarPerm extractEntry src-test/Sauron.test.js
+41 silly gunzTarPerm extractEntry src-test/require.js
+42 silly gunzTarPerm extractEntry src-test/bootstrap.css
+43 silly gunzTarPerm extractEntry src-test/Sauron.test.html
+44 silly gunzTarPerm extractEntry LICENSE-MIT
+45 verbose read json /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package/package.json
+46 silly lockFile 9a56ba29-664-0-009494624100625515-package /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package
+47 verbose from cache /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package/package.json
+48 verbose tar pack [ '/home/todd/.npm/Sauron/1.1.0/package.tgz',
+48 verbose tar pack   '/home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package' ]
+49 verbose tarball /home/todd/.npm/Sauron/1.1.0/package.tgz
+50 verbose folder /home/todd/tmp/npm-17621/1357791490664-0.009494624100625515/package
+51 silly lockFile 7357c7a8-odd-npm-Sauron-1-1-0-package-tgz /home/todd/.npm/Sauron/1.1.0/package.tgz
+52 verbose lock /home/todd/.npm/Sauron/1.1.0/package.tgz /home/todd/.npm/7357c7a8-odd-npm-Sauron-1-1-0-package-tgz.lock
+53 silly lockFile 7357c7a8-odd-npm-Sauron-1-1-0-package-tgz /home/todd/.npm/Sauron/1.1.0/package.tgz
+54 silly lockFile 5d17aea3-me-todd-npm-Sauron-1-1-0-package /home/todd/.npm/Sauron/1.1.0/package
+55 verbose lock /home/todd/.npm/Sauron/1.1.0/package /home/todd/.npm/5d17aea3-me-todd-npm-Sauron-1-1-0-package.lock
+56 silly lockFile 5d17aea3-me-todd-npm-Sauron-1-1-0-package /home/todd/.npm/Sauron/1.1.0/package
+57 verbose tar unpack /home/todd/.npm/Sauron/1.1.0/package.tgz
+58 silly lockFile 5d17aea3-me-todd-npm-Sauron-1-1-0-package /home/todd/.npm/Sauron/1.1.0/package
+59 verbose lock /home/todd/.npm/Sauron/1.1.0/package /home/todd/.npm/5d17aea3-me-todd-npm-Sauron-1-1-0-package.lock
+60 silly gunzTarPerm modes [ '755', '644' ]
+61 silly gunzTarPerm extractEntry package.json
+62 silly gunzTarPerm extractEntry .npmignore
+63 silly gunzTarPerm extractEntry README.md
+64 silly gunzTarPerm extractEntry grunt.js
+65 silly gunzTarPerm extractEntry src/Sauron.js
+66 silly gunzTarPerm extractEntry src/templates/vanilla.mustache
+67 silly gunzTarPerm extractEntry src/templates/require.mustache
+68 silly gunzTarPerm extractEntry dist/Sauron.require.js
+69 silly gunzTarPerm extractEntry dist/Sauron.js
+70 silly gunzTarPerm extractEntry dist/Sauron.require.min.js
+71 silly gunzTarPerm extractEntry dist/Sauron.min.js
+72 silly gunzTarPerm extractEntry stage/Sauron.require.js
+73 silly gunzTarPerm extractEntry stage/Sauron.js
+74 silly gunzTarPerm extractEntry src-test/Skeleton.js
+75 silly gunzTarPerm extractEntry src-test/Sauron.test.js
+76 silly gunzTarPerm extractEntry src-test/require.js
+77 silly gunzTarPerm extractEntry src-test/bootstrap.css
+78 silly gunzTarPerm extractEntry src-test/Sauron.test.html
+79 silly gunzTarPerm extractEntry LICENSE-MIT
+80 verbose read json /home/todd/.npm/Sauron/1.1.0/package/package.json
+81 silly lockFile 5d17aea3-me-todd-npm-Sauron-1-1-0-package /home/todd/.npm/Sauron/1.1.0/package
+82 silly shasum updated bytes 34698
+83 info shasum 9a25ac06e73f315f5fc6f45af1df6cc3bc7769c2
+83 info shasum /home/todd/.npm/Sauron/1.1.0/package.tgz
+84 verbose from cache /home/todd/.npm/Sauron/1.1.0/package/package.json
+85 verbose chmod /home/todd/.npm/Sauron/1.1.0/package.tgz 644
+86 verbose chown /home/todd/.npm/Sauron/1.1.0/package.tgz [ 1000, 1000 ]
+87 silly lockFile 3a52ce78- .
+88 silly publish { name: 'Sauron',
+88 silly publish   description: 'Mediator pattern for Halo, a client-side MVC framework.',
+88 silly publish   version: '1.1.0',
+88 silly publish   homepage: 'https://github.com/Ensighten/Sauron',
+88 silly publish   author:
+88 silly publish    { name: 'Todd Wolfson',
+88 silly publish      email: 'todd@twolfson.com',
+88 silly publish      url: 'http://twolfson.com/' },
+88 silly publish   repository: { type: 'git', url: 'git://github.com/Ensighten/Sauron.git' },
+88 silly publish   bugs: { url: 'https://github.com/Ensighten/Sauron/issues' },
+88 silly publish   licenses:
+88 silly publish    [ { type: 'MIT',
+88 silly publish        url: 'https://github.com/Ensighten/Sauron/blob/master/LICENSE-MIT' } ],
+88 silly publish   main: 'src/Sauron.js',
+88 silly publish   scripts: { test: 'grunt qunit' },
+88 silly publish   dependencies: {},
+88 silly publish   devDependencies:
+88 silly publish    { grunt: '~0.3.17',
+88 silly publish      'grunt-templater': '0.0.3-1',
+88 silly publish      mustache: '~0.7.0' },
+88 silly publish   keywords: [ 'mediator', 'mvc', 'halo', 'emit', 'client-side' ],
+88 silly publish   readme: 'Sauron\n======\nMediator pattern for [Halo][halo], a client-side MVC framework.\n\nSynopsis\n--------\nSauron was designed as a core component of [Halo][halo]; providing a loose channel system for talking between models and controllers.\n\n[halo]: https://github.com/Ensighten/halo\n\nGetting Started\n---------------\nDownload the [production version][min] ([vanilla][min] or [requirejs][min_require]) or the [development version][max] ([vanilla][max] or [requirejs][max_require]).\n\n[min_require]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.min.js\n[max_require]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.require.js\n[min]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.min.js\n[max]: https://raw.github.com/Ensighten/Sauron/master/dist/Sauron.js\n\nIn your web page:\n\n```html\n<script src="jquery.js"></script>\n<script src="dist/Sauron.min.js"></script>\n<script>\n// Start the main controller on the home page\nSauron.start().controller(\'main\', {\'page\': \'home\'});\n</script>\n```\n\nDocumentation\n-------------\nSauron can talk in the `controller`, `model`, or no namespace.\n\nWithin all namespaces, we can modify events to be subscriptions, `on`, unsubscriptions, `off`, or emissions/triggers, `voice`. By default, if a namespace has a terminating method called (e.g. `start` for `controller`) and there is no modifier, `voice` will be called.\n\nTerminating methods for the `controller` namespace are `start` and `stop`.\n```js\nSauron.start().controller(\'home\', {\'some\': \'data\'});\n```\n\nTerminating methods for the `model` namespace are `create`, `retrieve`, `update`, `delete`, `createEvent`, `updateEvent`, and `deleteEvent`.\n```js\nSauron.model(\'app\').retrieve({\'id\': 1}, function (err, app) {\n  // Inspect app\n});\n```\n\nExamples\n--------\n### Listening for an event\n```js\nSauron.on().controller(\'home\').start(function () {\n  console.log(\'A home controller has been started\');\n});\n```\n\n### Triggering an event\n```js\nSauron.model(\'user\').create({\'name\': \'John Doe\'});\n```\n\n### Unsubscribing from an event internally\n```js\nSauron.on().model(\'page\').createEvent(function () {\n  console.log(\'New page created\');\n  this.off();\n});\n```\n\n### Unsubscribing from an event externally\n```js\nvar subFn = function () {\n  console.log(\'Stop was called\');\n};\nSauron.on().controller(\'about\').stop(subFn);\nSauron.off().controller(\'about\').stop(subFn);\n```\n\nAPI\n---\n```js\nSauron.channel([raw]);\n/**\n * Retrieval function for the current channel\n * @param {Boolean} [raw] If true, prefixing will be skipped\n * @returns {String}\n */\n\nSauron.of(subchannel);\n/**\n * Adds a new subchannel to the current channel\n * @param {String} subchannel\n * @returns {this.clone}\n */\n\nSauron.on([subchannel], [fn]);\n/**\n * Subscribing function for event listeners\n * @param {String} [subchannel] Subchannel to listen to\n * @param {Function} [fn] Function to subscribe with\n * @returns {this.clone}\n */\n\nSauron.off([subchannel], [fn]);\n/**\n * Unsubscribing function for event listeners\n * @param {String} [subchannel] Subchannel to unsubscribe from to\n * @param {Function} [fn] Function to remove subscription on\n * @returns {this.clone}\n */\n\nSauron.voice(subchannel, [param1], [param2], ...);\n/**\n * Voice/emit command for Sauron\n * @param {String|null} subchannel Subchannel to call on. If it is falsy, it will be skipped\n * @param {Mixed} [param] Parameter to voice to the channel. There can be infinite of these\n * @returns {Sauron}\n */\n\nSauron.clone();\n/**\n * Returns a cloned copy of this\n * @returns {this.clone}\n */\n\nSauron.once([subchannel], [fn]);\n/**\n * Sugar subscribe function that listens to an event exactly once\n * @param {String} [subchannel] Subchannel to listen to\n * @param {Function} [fn] Function to subscribe with\n * @returns {this.clone}\n */\n\nSauron.noError(fn);\n/**\n * Helper function for error first callbacks. If an error occurs, we will log it and not call the function.\n * @param {Function} fn Function to remove error for\n * @returns {Function}\n */\n\n// CONTROLLER METHODS\n\nSauron.controller(controller);\n/**\n * Fluent method for calling out a controller\n * @param {String} controller Name of the controller to invoke\n * @param {Mixed} * If there are any arguments, they will be passed to (on, off, once, voice) for invocation\n * @returns {Mixed} If there are more arguments than controller, the (on, off, once, voice) response will be returned. Otherwise, this.clone\n */\n\nSauron.createController(controller);\n/**\n * Method for creating controllers\n * @param {String} controller Controller to use name for\n * This will ALWAYS call the (on, off, once, voice) function.\n */\n\nSauron.start([param1], [param2], ...);\nSauron.stop([param1], [param2], ...);\n/**\n * Methods for starting/stopping controllers. Will call previous action if there was any (e.g. on, off, once).\n */\n\n// MODEL METHODS\n\nSauron.model(model);\n// Same as Sauron.controller except for models\n\nSauron.createModel(model);\n// Same as Sauron.createController except for models\n\nSauron.(create|retrieve|update|delete)(Event)?([param1], [param2], ...);\n// Same as Sauron.start except for models\n// Names expand to create, createEvent, retrieve, ..., deleteEvent\n```\n\nContributing\n------------\nIn lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint your code using [grunt](http://gruntjs.com/) and test via the [instructions below](#testing).\n\n_Also, please don\'t edit files in the "dist" or "stage" subdirectories as they are generated via grunt. You\'ll find source code in the "lib" subdirectory!_\n\nTesting\n-------\nThe test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a [crossbones][crossbones] wrapper) for in-browser testing. Start up the server, navigate to the [test page][testPage], and the test will begin.\n```js\n# If you do not have serve installed, install it\nsudo npm install -g serve\n\n# Begin hosting a server\nserve\n\n# Navigate to the test page\n{{browser}} http://localhost:3000/src-test/Sauron.test.html\n```\n\n[crossbones]: https://github.com/Ensighten/crossbones\n[testPage]: http://localhost:3000/src-test/Sauron.test.html\n\nLicense\n-------\nCopyright (c) 2013 Ensighten\nLicensed under the MIT license.',
+88 silly publish   _id: 'Sauron@1.1.0',
+88 silly publish   dist: { shasum: '9a25ac06e73f315f5fc6f45af1df6cc3bc7769c2' } }
+89 verbose url raw Sauron
+90 verbose url resolving [ 'https://registry.npmjs.org/', './Sauron' ]
+91 verbose url resolved https://registry.npmjs.org/Sauron
+92 info retry registry request attempt 1 at 20:18:12
+93 http PUT https://registry.npmjs.org/Sauron
+94 http 403 https://registry.npmjs.org/Sauron
+95 error publish Failed PUT response 403
+96 error Error: forbidden New packages must have all-lowercase names: Sauron
+96 error     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:238:14)
+96 error     at Request.init.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/main.js:120:22)
+96 error     at Request.EventEmitter.emit (events.js:91:17)
+96 error     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/main.js:555:16)
+96 error     at Request.EventEmitter.emit (events.js:88:17)
+96 error     at IncomingMessage.Request.start.self.req.self.httpModule.request.buffer (/usr/local/lib/node_modules/npm/node_modules/request/main.js:517:14)
+96 error     at IncomingMessage.EventEmitter.emit (events.js:115:20)
+96 error     at IncomingMessage._emitEnd (http.js:366:10)
+96 error     at HTTPParser.parserOnMessageComplete [as onMessageComplete] (http.js:149:23)
+96 error     at CleartextStream.socketOnData [as ondata] (http.js:1366:20)
+97 error If you need help, you may report this log at:
+97 error     <http://github.com/isaacs/npm/issues>
+97 error or email it to:
+97 error     <npm-@googlegroups.com>
+98 error System Linux 3.2.0-23-generic
+99 error command "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+100 error cwd /home/todd/github/Sauron
+101 error node -v v0.8.8
+102 error npm -v 1.1.41
+103 verbose exit [ 1, true ]
