@@ -183,7 +183,7 @@ _Also, please don't edit files in the "dist" or "stage" subdirectories as they a
 
 Testing
 -------
-The test suite is written in [Mocha](http://visionmedia.github.com/mocha/) (with a [crossbones][crossbones] wrapper) for in-browser testing. Start up the server, navigate to the [test page][testPage], and the test will begin.
+The test suite is written in [Mocha](https://mochajs.org/) (with a [crossbones][crossbones] wrapper) for in-browser testing. Start up the server, navigate to the [test page][testPage], and the test will begin.
 ```js
 # If you do not have serve installed, install it
 sudo npm install -g serve
